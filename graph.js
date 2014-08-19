@@ -174,7 +174,8 @@ function handleFileSelect(event) {
         graph.resetCells(cells);
         console.log('generation complete');
         console.log('starting layout');
-        joint.layout.DirectedGraph.layout(graph, { setLinkVertices: false, rankDir: "BT" });
+        var size = joint.layout.DirectedGraph.layout(graph, { setLinkVertices: false, rankDir: "BT" });
+        paper.setDimensions(size.width + 100, size.height + 100); //give some extra room for element sizes
         console.log('layout complete')
         //re-map elements to editable view elements for efficiency
         for(i=0;i<graphinfo.elements.length;i++){
