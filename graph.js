@@ -1,4 +1,12 @@
-//init
+/*************/
+/* init      */
+/*************/
+
+//set the change handler
+$('#file').change(handleFileSelect);
+//set the change handler
+$('#list').change(handleListSelect);
+var graphinfo = {};
 var graph = new joint.dia.Graph;
 var paper = new joint.dia.Paper({
     el: $('#paper'),
@@ -9,33 +17,10 @@ var paper = new joint.dia.Paper({
 });
 //Just give the viewport a little padding.
 V(paper.viewport).translate(20, 20);
-//holds all the layed out data
-graphs = [];
-//store all the text of all the open files
-var filecontents = []
 
 /***********/
 /* Parsing */
 /***********/
-
-function buildGraphFromAdjacencyList(adjacencyList) {
-
-    var elements = [];
-    var links = [];
-    
-    _.each(adjacencyList, function(edges, parentElementLabel) {
-        elements.push(makeElement(parentElementLabel));
-
-        _.each(edges, function(childElementLabel) {
-            links.push(makeLink(parentElementLabel, childElementLabel));
-        });
-    });
-
-    // Links must be added after all the elements. This is because when the links
-    // are added to the graph, link source/target
-    // elements must be in the graph already.
-    return elements.concat(links);
-}
 
 function makeLink(parentElementLabel, childElementLabel) {
 
@@ -72,101 +57,158 @@ function makeElement(label) {
     });
 }
 
-function parseDot(text){
-    //assuming specialized .dot format
-    var lines = text.split('\n');
-    var nodes = [];
-    var links = [];
-    for(var i = 5;i<lines.length-2;i++){
-        tokens = lines[i].split(' ');
-        console.log(tokens);
-        if(tokens[3] == '->'){
-            links.push(makeLink(tokens[2],tokens[4]));
-        } else {
-           nodes.push(makeElement(tokens[2]))
+// Parses a file, storing all the data into the graphinfo object
+// returns an array of graph elements
+function parseSimpleAdaptonView(text){
+    graphinfo = {
+        states: [],
+        elements: [],
+        links: []
+    }
+    states = text.split('Graph state: ');
+    //first line is the blank before the first state
+    states.shift();
+    for(i=0;i<states.length;i++){
+        graphinfo.states[i] = {
+            title: "No name",
+            elementStates: [],
+            linkStates: []
+        }
+        state = graphinfo.states[i]; //shortcut
+        lines = states[i].split('\n');
+        state.title = lines.shift();
+        for(j=0;j<lines.length;j++){
+            tokens = lines[j].split(' ');
+            //process line as element
+            if(tokens.length == 2){
+                ename = tokens[0];
+                estate = tokens[1];
+                eindex = graphinfo.elements.indexOf(ename);
+                if(eindex == -1){
+                    graphinfo.elements.push(ename);
+                    eindex = graphinfo.elements.length-1;
+                }
+                state.elementStates[eindex] = estate;
+            }//end element parse
+            //process line as link
+            if(tokens.length == 3){
+                //get line data
+                fromNode = tokens[0];
+                toNode = tokens[1];
+                linkState = tokens[2];
+                //set up the elements of the link if needed
+                fromNodeIndex = graphinfo.elements.indexOf(fromNode);
+                toNodeIndex = graphinfo.elements.indexOf(toNode);
+                if(fromNodeIndex == -1){
+                    graphinfo.elements.push(fromNode)
+                    fromNodeIndex = graphinfo.elements.length-1;
+                    state.elementStates[fromNodeIndex] = 'active';
+                }
+                if(toNodeIndex == -1){
+                    graphinfo.elements.push(toNode)
+                    toNodeIndex = graphinfo.elements.length-1;
+                    state.elementStates[toNodeIndex] = 'active';
+                }
+                if(!state.elementStates[fromNodeIndex]) {
+                    state.elementStates[fromNodeIndex] = 'active';
+                }
+                if(!state.elementStates[toNodeIndex]) {
+                    state.elementStates[toNodeIndex] = 'active';
+                }
+                //set up the link
+                linkIndex = graphinfo.links.indexOf(fromNode+','+toNode);
+                if(linkIndex == -1){
+                    graphinfo.links.push(fromNode+','+toNode);
+                    linkIndex = graphinfo.links.length-1;
+                }
+                state.linkStates[linkIndex] = linkState;
+            }//end link parse
+        }//end line parse
+    }//end state parse
+    //clean up data
+    for(i=0;i<graphinfo.states.length;i++){
+        state = graphinfo.states[i]; //shortcut
+        for(j=0;j<graphinfo.elements.length;j++){
+            if(!state.elementStates[j]){
+                state.elementStates[j] = 'nonactive';
+            }
+        }
+        for(j=0;j<graphinfo.links.length;j++){
+            if(!state.linkStates[j]){
+                state.linkStates[j] = 'nonactive';
+            }
         }
     }
-
-    return nodes.concat(links);
+    //create elements and links
+    for(i=0;i<graphinfo.elements.length;i++){
+        graphinfo.elements[i] = makeElement(graphinfo.elements[i]);
+    }
+    for(i=0;i<graphinfo.links.length;i++){
+        tofrom = graphinfo.links[i].split(',');
+        graphinfo.links[i] = makeLink(tofrom[0],tofrom[1]);
+    }
+    //return list of elements to graph
+    return graphinfo.elements.concat(graphinfo.links);
 }
 
 /*****************/
 /* file handling */
 /*****************/
-//utility for parsing all the files
-var grapher = {active: false, ready: [], finished:[], graph:function(index){
-    //don't do unneccesary work
-    if(grapher.active) return;
-    if(!grapher.ready[index]) return;
-    if(grapher.finished[index]) return;
-    //do neccesary work
-    grapher.active = true;
-    var cells;
-    try {
-        var adjacencyList = eval(filecontents[index]);
-        cells = buildGraphFromAdjacencyList(adjacencyList);
-        console.log("Parsed simple adjacency list");
-    } catch (e) {
-        cells = parseDot(filecontents[index]);
-        console.log("Parsed dot file");
-    }
-    graphs[index] = cells;
-    graph.resetCells(cells);
-    console.log("laying out graph: "+index);
-    joint.layout.DirectedGraph.layout(graph, { setLinkVertices: false });
-    console.log("done");
-    grapher.finished[index] = true;
-    //TODO: change color of list box item
-    //find next ready item
-    for(var i = 0;i< grapher.ready.length;i++){
-        if(grapher.ready[i] && !grapher.finished[i]){
-            //pause for a bit to allow user interaction
-            _.delay(grapher.graph, 50, i);
-            break;
-        }
-    }
-    grapher.active = false;
-}}
 //handler for new file selection
 function handleFileSelect(event) {
+    $('#list').empty();
     var files = event.target.files;
-    var count = files.length;
-    var readers = new Array(count);
-    //reset data
-    grapher.active = false;
-    grapher.ready = new Array(count);
-    grapher.finished = new Array(count);
-    graphs = new Array(count);
-    filecontents = new Array(count);
-    $('#filelist').empty();
-    //open all the files at once
-    for(var i = 0; i< files.length;i++){
-        //include the name and index in our list
-        $('#filelist').append('<option value="'+i+'">'+files[i].name+'</option>');
-        //save the text in a global array
-        readers[i] = new FileReader();
-        //closure to store index value
-        readers[i].onload =  (function(index){return function (e) {
-            filecontents[index] = e.target.result;
-            grapher.ready[index] = true;
-            grapher.graph(index);
-        }})(i);
-        readers[i].readAsText(files[i]);
-    }
+    var f = files[0];
+    var reader = new FileReader();
+    reader.onload = function (e) {
+        filecontents = e.target.result;
+        //parse data into graphinfo and cells
+        cells = parseSimpleAdaptonView(filecontents);
+        //lay out the graph
+        graph.resetCells(cells);
+        joint.layout.DirectedGraph.layout(graph, { setLinkVertices: false });
+        //re-map elements to editable view elements for efficiency
+        for(i=0;i<graphinfo.elements.length;i++){
+            model = graphinfo.elements[i];
+            graphinfo.elements[i] = V(paper.findViewByModel(model).el);
+        }
+        for(i=0;i<graphinfo.links.length;i++){
+            model = graphinfo.links[i];
+            graphinfo.links[i] = V(paper.findViewByModel(model).el);
+        }
+        //set first states
+        graphinfo.currentState = 0;
+        for(i=0;i<graphinfo.elements.length;i++){
+            graphinfo.elements[i].addClass(graphinfo.states[0].elementStates[i]);
+        }
+        for(i=0;i<graphinfo.links.length;i++){
+            graphinfo.links[i].addClass(graphinfo.states[0].linkStates[i]);
+        }
+        //populate list box with states
+        for(i=0;i<graphinfo.states.length;i++){
+            $('#list').append('<option value="'+i+'">'+graphinfo.states[i].title+'</option>');
+        }
+    }//end file load handler
+    reader.readAsText(f)
 }
-//set the change handler
-$('#files').change(handleFileSelect);
-
 /********************/
 /* listbox handling */
 /********************/
 function handleListSelect(event){
-    var index = parseInt(event.target.value);
-    grapher.graph(index);
-//version 0.9.0
-//    graph.resetCells(graphs[index].getElements());
-//    graph.addCells(graphs[index].getLinks());
-    graph.resetCells(graphs[index]);
+    var newState = parseInt(event.target.value);
+    if(newState == -1) return;
+    //shortcuts
+    var eso = graphinfo.states[graphinfo.currentState].elementStates;
+    var lso = graphinfo.states[graphinfo.currentState].linkStates;
+    var esn = graphinfo.states[newState].elementStates;
+    var lsn = graphinfo.states[newState].linkStates;
+    //change the state of all the stored objects
+    for(i=0;i<graphinfo.elements.length;i++){
+        graphinfo.elements[i].removeClass(eso[i]).addClass(esn[i]);
+    }
+    for(i=0;i<graphinfo.links.length;i++){
+        graphinfo.links[i].removeClass(lso[i]).addClass(lsn[i]);
+    }
+    //set current state
+    graphinfo.currentState = newState;
 }
-//set the change handler
-$('#filelist').change(handleListSelect);

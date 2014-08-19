@@ -1,17 +1,66 @@
-#paper {
-   border: 1px solid gray;
-   position: relative;
-   overflow: scroll;
-   margin-top: 6px;
+/* graph element states */
+
+.active .connection {
+    stroke: #2ecc71;
+    stroke-width: 3px;
 }
-#adjacency-list {
-   width: 690px;
-   height: 140px;
+
+.nonactive .connection {
+  stroke: #c0c0c0;
+  stroke-width: 1px;
+}
+
+.trouble .connection {
+  stroke: #0202ce;
+  stroke-width: 3px;
+}
+
+.active.element rect {
+    stroke: #179e50;
+    fill: #15dddd;
+    stroke-width: 3px;
+}
+
+.active.element text {
+  stroke: #202020;
+}
+
+.nonactive.element rect {
+  stroke: #c0c0c0;
+}
+
+.nonactive.element text {
+  stroke: #c0c0c0;
+}
+
+.missing.element rect {
+  fill: #080808;
+}
+.missing.element text {
+  stroke: #dd0000;
+}
+
+/* document layout */
+
+#paper {
+   position: fixed;
+   top: 0;
+   right: 0;
+   width: 80%;
+   height: 100%;
+   overflow: scroll;
+}
+#list {
    font-family: monospace;
    font-size: 11px;
    padding: 5px;
 }
 #toolbar {
+   position: fixed;
+   width: 250px;
+   top: 0;
+   left: 0;
+   padding: 30px;
 }
 #btn-layout {
    font-family: Arial, Helvetica, sans-serif;
