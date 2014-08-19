@@ -2,6 +2,7 @@
 /* init      */
 /*************/
 
+//this is the only way I could get the layout the way I wanted it...
 var CONTROL_BAR_WIDTH = 250;
 
 //set the change handler
@@ -194,7 +195,8 @@ function handleFileSelect(event) {
         }
         //set first states
         console.log('loading first states');
-        graphinfo.currentState = 0;
+        graphinfo.currentBState = 0;
+        graphinfo.currentCState = -1;
         for(i=0;i<graphinfo.elements.length;i++){
             graphinfo.elements[i].addClass(graphinfo.states[0].elementStates[i]);
         }
@@ -202,8 +204,9 @@ function handleFileSelect(event) {
             graphinfo.links[i].addClass(graphinfo.states[0].linkStates[i]);
         }
         //populate list box with states
+        c=-1;
         for(i=0;i<graphinfo.states.length;i++){
-            $('#list').append('<option value="'+i+'">'+graphinfo.states[i].title+'</option>');
+            $('#list').append('<option value="'+i+'c'+c+'">'+graphinfo.states[i].title+'</option>');
         }
         console.log('ready for user interation');
     }//end file load handler
@@ -214,24 +217,46 @@ function handleFileSelect(event) {
 /* listbox handling */
 /********************/
 function handleListSelect(event){
-    var newState = parseInt(event.target.value);
-    if(newState == -1) return;
+    var ss = event.target.value.split('c');
+    var baseState = parseInt(ss[0]);
+    var changeState = parseInt(ss[1]);
+
+    if(baseState == -1 || baseState == NaN) return;
     //shortcuts
-    var eso = graphinfo.states[graphinfo.currentState].elementStates;
-    var lso = graphinfo.states[graphinfo.currentState].linkStates;
-    var esn = graphinfo.states[newState].elementStates;
-    var lsn = graphinfo.states[newState].linkStates;
-    //change the state of all the stored objects
-    for(i=0;i<graphinfo.elements.length;i++){
-        if(esn[i] != eso[i]){
-            graphinfo.elements[i].removeClass(eso[i]).addClass(esn[i]);
+    var eso = graphinfo.states[graphinfo.currentBState].elementStates;
+    var lso = graphinfo.states[graphinfo.currentBState].linkStates;
+    var esn = graphinfo.states[baseState].elementStates;
+    var lsn = graphinfo.states[baseState].linkStates;
+
+    if(graphinfo.currentBState == baseState && graphinfo.currentCState < changeState){
+        //only load the changes
+        for(cs=graphinfo.currentCState+1;cs<=changeState;cs++){
+            var ecs = graphinfo.states[baseState].cstates[cs].elementStates;
+            var lcs = graphinfo.states[baseState].cstates[cs].linkStates;
+            graphinfo.elements[ecs.e].removeClass(ecs.o).addClass(ecs.n);
+            graphinfo.elements[lcs.e].removeClass(lcs.o).addClass(lcs.n);
         }
-    }
-    for(i=0;i<graphinfo.links.length;i++){
-        if(lsn[i] != lso[i]){
-            graphinfo.links[i].removeClass(lso[i]).addClass(lsn[i]);
+    }else{
+        //change the state of all the stored objects to the base state
+        for(i=0;i<graphinfo.elements.length;i++){
+            if(esn[i] != eso[i]){
+                graphinfo.elements[i].removeClass(eso[i]).addClass(esn[i]);
+            }
         }
+        for(i=0;i<graphinfo.links.length;i++){
+            if(lsn[i] != lso[i]){
+                graphinfo.links[i].removeClass(lso[i]).addClass(lsn[i]);
+            }
+        }
+        //add all the changes
+        for(cs=0;cs<=changeState;cs++){
+            var ecs = graphinfo.states[baseState].cstates[cs].elementStates;
+            var lcs = graphinfo.states[baseState].cstates[cs].linkStates;
+            graphinfo.elements[ecs.e].removeClass(ecs.o).addClass(ecs.n);
+            graphinfo.elements[lcs.e].removeClass(lcs.o).addClass(lcs.n);
+        }    
     }
     //set current state
-    graphinfo.currentState = newState;
+    graphinfo.currentBState = baseState;
+    graphinfo.currentcState = changeState;
 }
