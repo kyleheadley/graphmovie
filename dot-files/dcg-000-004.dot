@@ -1,0 +1,12 @@
+digraph dcg_0 {
+  labelloc="t";
+  label="dcg-000-004.dot";
+  node [fontname="sans-serif"];
+  node [shape=box style="rounded,filled"];
+  n12 [label="12" color=grey];
+  n14 [label="14" color=grey];
+  n18 [label="18" color=grey];
+  n23 [label="23" color=grey];
+  n26 [label="26" color=grey];
+  n27 [label="27" color=grey];
+}
