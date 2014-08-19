@@ -65,10 +65,12 @@ function parseSimpleAdaptonView(text){
         elements: [],
         links: []
     }
+    console.log('spliting on state');
     states = text.split('Graph state: ');
     //first line is the blank before the first state
     states.shift();
     for(i=0;i<states.length;i++){
+        console.log('starting parse of state '+i);
         graphinfo.states[i] = {
             title: "No name",
             elementStates: [],
@@ -161,12 +163,19 @@ function handleFileSelect(event) {
     var f = files[0];
     var reader = new FileReader();
     reader.onload = function (e) {
+        console.log('file loaded');
         filecontents = e.target.result;
         //parse data into graphinfo and cells
+        console.log('starting parse');
         cells = parseSimpleAdaptonView(filecontents);
+        console.log('parse complete');
         //lay out the graph
+        console.log('starting graph generation');
         graph.resetCells(cells);
-        joint.layout.DirectedGraph.layout(graph, { setLinkVertices: false });
+        console.log('generation complete');
+        console.log('starting layout');
+        joint.layout.DirectedGraph.layout(graph, { setLinkVertices: false, rankDir: "BT" });
+        console.log('layout complete')
         //re-map elements to editable view elements for efficiency
         for(i=0;i<graphinfo.elements.length;i++){
             model = graphinfo.elements[i];
@@ -177,6 +186,7 @@ function handleFileSelect(event) {
             graphinfo.links[i] = V(paper.findViewByModel(model).el);
         }
         //set first states
+        console.log('loading first states');
         graphinfo.currentState = 0;
         for(i=0;i<graphinfo.elements.length;i++){
             graphinfo.elements[i].addClass(graphinfo.states[0].elementStates[i]);
@@ -188,8 +198,10 @@ function handleFileSelect(event) {
         for(i=0;i<graphinfo.states.length;i++){
             $('#list').append('<option value="'+i+'">'+graphinfo.states[i].title+'</option>');
         }
+        console.log('ready for user interation');
     }//end file load handler
-    reader.readAsText(f)
+    console.log('loading file');
+    reader.readAsText(f);
 }
 /********************/
 /* listbox handling */
@@ -204,10 +216,14 @@ function handleListSelect(event){
     var lsn = graphinfo.states[newState].linkStates;
     //change the state of all the stored objects
     for(i=0;i<graphinfo.elements.length;i++){
-        graphinfo.elements[i].removeClass(eso[i]).addClass(esn[i]);
+        if(esn[i] != eso[i]){
+            graphinfo.elements[i].removeClass(eso[i]).addClass(esn[i]);
+        }
     }
     for(i=0;i<graphinfo.links.length;i++){
-        graphinfo.links[i].removeClass(lso[i]).addClass(lsn[i]);
+        if(lsn[i] != lso[i]){
+            graphinfo.links[i].removeClass(lso[i]).addClass(lsn[i]);
+        }
     }
     //set current state
     graphinfo.currentState = newState;
