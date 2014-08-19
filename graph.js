@@ -1,5 +1,22 @@
-// Helpers.
-// --------
+//init
+var graph = new joint.dia.Graph;
+var paper = new joint.dia.Paper({
+    el: $('#paper'),
+    width: 2000,
+    height: 2000,
+    gridSize: 1,
+    model: graph
+});
+//Just give the viewport a little padding.
+V(paper.viewport).translate(20, 20);
+//holds all the layed out data
+graphs = [];
+//store all the text of all the open files
+var filecontents = []
+
+/***********/
+/* Parsing */
+/***********/
 
 function buildGraphFromAdjacencyList(adjacencyList) {
 
@@ -73,53 +90,83 @@ function parseDot(text){
     return nodes.concat(links);
 }
 
-function handleFileSelect(event) {
-    var files = event.target.files;
-    var f = files[0];
-    var reader = new FileReader();
-    reader.onload = function (e) {
-        $('#adjacency-list').val(e.target.result);
-        layout();
-    }
-    reader.readAsText(f);
-}
-
-$('#files').change(handleFileSelect);
-
-// Main.
-// -----
-
-var graph = new joint.dia.Graph;
-
-var paper = new joint.dia.Paper({
-
-    el: $('#paper'),
-    width: 2000,
-    height: 2000,
-    gridSize: 1,
-    model: graph
-});
-
-// Just give the viewport a little padding.
-V(paper.viewport).translate(20, 20);
-
-$('#btn-layout').on('click', layout);
-
-function layout() {
-
+/*****************/
+/* file handling */
+/*****************/
+//utility for parsing all the files
+var grapher = {active: false, ready: [], finished:[], graph:function(index){
+    //don't do unneccesary work
+    if(grapher.active) return;
+    if(!grapher.ready[index]) return;
+    if(grapher.finished[index]) return;
+    //do neccesary work
+    grapher.active = true;
     var cells;
-    
     try {
-        var adjacencyList = eval('adjacencyList = ' + $('#adjacency-list').val());
+        var adjacencyList = eval(filecontents[index]);
         cells = buildGraphFromAdjacencyList(adjacencyList);
         console.log("Parsed simple adjacency list");
     } catch (e) {
-        cells = parseDot($('#adjacency-list').val());
+        cells = parseDot(filecontents[index]);
         console.log("Parsed dot file");
     }
-    
+    graphs[index] = cells;
     graph.resetCells(cells);
+    console.log("laying out graph: "+index);
     joint.layout.DirectedGraph.layout(graph, { setLinkVertices: false });
+    console.log("done");
+    grapher.finished[index] = true;
+    //TODO: change color of list box item
+    //find next ready item
+    for(var i = 0;i< grapher.ready.length;i++){
+        if(grapher.ready[i] && !grapher.finished[i]){
+            //pause for a bit to allow user interaction
+            _.delay(grapher.graph, 50, i);
+            break;
+        }
+    }
+    grapher.active = false;
+}}
+//handler for new file selection
+function handleFileSelect(event) {
+    var files = event.target.files;
+    var count = files.length;
+    var readers = new Array(count);
+    //reset data
+    grapher.active = false;
+    grapher.ready = new Array(count);
+    grapher.finished = new Array(count);
+    graphs = new Array(count);
+    filecontents = new Array(count);
+    $('#filelist').empty();
+    //open all the files at once
+    for(var i = 0; i< files.length;i++){
+        //include the name and index in our list
+        $('#filelist').append('<option value="'+i+'">'+files[i].name+'</option>');
+        //save the text in a global array
+        readers[i] = new FileReader();
+        //closure to store index value
+        readers[i].onload =  (function(index){return function (e) {
+            filecontents[index] = e.target.result;
+            grapher.ready[index] = true;
+            grapher.graph(index);
+        }})(i);
+        readers[i].readAsText(files[i]);
+    }
 }
-layout();
+//set the change handler
+$('#files').change(handleFileSelect);
 
+/********************/
+/* listbox handling */
+/********************/
+function handleListSelect(event){
+    var index = parseInt(event.target.value);
+    grapher.graph(index);
+//version 0.9.0
+//    graph.resetCells(graphs[index].getElements());
+//    graph.addCells(graphs[index].getLinks());
+    graph.resetCells(graphs[index]);
+}
+//set the change handler
+$('#filelist').change(handleListSelect);

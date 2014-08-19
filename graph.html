@@ -1,28 +1,20 @@
 
 <!DOCTYPE html>
 <html><body>
-<link rel="stylesheet" type="text/css" href="joint.min.css" />
+<link rel="stylesheet" type="text/css" href="assets/joint.min.css" />
 <link rel="stylesheet" type="text/css" href="graph.css" />
 
-<input type="file" id="files" name="files" />
 
 <div id="toolbar">
-    <textarea id="adjacency-list">{
-  'This is\nan element': ['b', 'c'],
-  'b': ['f'],
-  'c': ['e', 'd'],
-  'd': [],
-  'e': [],
-  'f': ['g'],
-  'g': []
-}</textarea>
-    <br/>
-    <button id="btn-layout">Layout</button>
+	<input type="file" id="files" name="files" multiple />
+    <select id="filelist" size="35">
+    	<option>No files selected</option>
+    </select>
 </div>
 <div id="paper"></div>
 
-<script type="text/javascript" src="joint.min.js"></script>
-<script type="text/javascript" src="joint.layout.DirectedGraph.min.js"></script>
+<script type="text/javascript" src="assets/joint.min.js"></script>
+<script type="text/javascript" src="assets/joint.layout.DirectedGraph.min.js"></script>
 <script type="text/javascript" src="graph.js"></script>
 
 </body></html>
