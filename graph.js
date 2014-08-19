@@ -2,6 +2,8 @@
 /* init      */
 /*************/
 
+var CONTROL_BAR_WIDTH = 250;
+
 //set the change handler
 $('#file').change(handleFileSelect);
 //set the change handler
@@ -10,13 +12,13 @@ var graphinfo = {};
 var graph = new joint.dia.Graph;
 var paper = new joint.dia.Paper({
     el: $('#paper'),
-    width: 2000,
-    height: 2000,
+    width: 200,
+    height: 200,
     gridSize: 1,
     model: graph
 });
-//Just give the viewport a little padding.
-V(paper.viewport).translate(20, 20);
+//move the paper out from under the controls
+V(paper.viewport).translate(CONTROL_BAR_WIDTH + 2, 2);
 
 /***********/
 /* Parsing */
@@ -174,8 +176,12 @@ function handleFileSelect(event) {
         graph.resetCells(cells);
         console.log('generation complete');
         console.log('starting layout');
-        var size = joint.layout.DirectedGraph.layout(graph, { setLinkVertices: false, rankDir: "BT" });
-        paper.setDimensions(size.width + 100, size.height + 100); //give some extra room for element sizes
+        var size = joint.layout.DirectedGraph.layout(graph, {
+            setLinkVertices: false,
+            nodeSep: 5,
+            rankDir: "BT"
+        });
+        paper.setDimensions(CONTROL_BAR_WIDTH + size.width + 100, size.height + 100); //give some extra room for element sizes
         console.log('layout complete')
         //re-map elements to editable view elements for efficiency
         for(i=0;i<graphinfo.elements.length;i++){
