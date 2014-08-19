@@ -1,0 +1,10 @@
+Graph state: First
+1 2 active
+btw, anything that doesn't fit this pattern gets ignored
+any state can be defined in the css for visuals
+2 3 active
+4 unknown
+Graph state: Second
+2 3 active
+3 4 trouble
+5 missing

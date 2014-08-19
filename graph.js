@@ -1,0 +1,214 @@
+/*************/
+/* init      */
+/*************/
+
+//set the change handler
+$('#file').change(handleFileSelect);
+//set the change handler
+$('#list').change(handleListSelect);
+var graphinfo = {};
+var graph = new joint.dia.Graph;
+var paper = new joint.dia.Paper({
+    el: $('#paper'),
+    width: 2000,
+    height: 2000,
+    gridSize: 1,
+    model: graph
+});
+//Just give the viewport a little padding.
+V(paper.viewport).translate(20, 20);
+
+/***********/
+/* Parsing */
+/***********/
+
+function makeLink(parentElementLabel, childElementLabel) {
+
+    return new joint.dia.Link({
+        source: { id: parentElementLabel },
+        target: { id: childElementLabel },
+        attrs: { '.marker-target': { d: 'M 4 0 L 0 2 L 4 4 z' } },
+        smooth: true
+    });
+}
+
+function makeElement(label) {
+
+    var maxLineLength = _.max(label.split('\n'), function(l) { return l.length; }).length;
+
+    // Compute width/height of the rectangle based on the number
+    // of lines in the label and the letter size. 0.6 * letterSize is
+    // an approximation of the monospace font letter width.
+    var letterSize = 8;
+    var width = 2 * (letterSize * (0.6 * maxLineLength + 1));
+    var height = 2 * ((label.split('\n').length + 1) * letterSize);
+
+    return new joint.shapes.basic.Rect({
+        id: label,
+        size: { width: width, height: height },
+        attrs: {
+            text: { text: label, 'font-size': letterSize, 'font-family': 'monospace' },
+            rect: {
+                width: width, height: height,
+                rx: 5, ry: 5,
+                stroke: '#555'
+            }
+        }
+    });
+}
+
+// Parses a file, storing all the data into the graphinfo object
+// returns an array of graph elements
+function parseSimpleAdaptonView(text){
+    graphinfo = {
+        states: [],
+        elements: [],
+        links: []
+    }
+    states = text.split('Graph state: ');
+    //first line is the blank before the first state
+    states.shift();
+    for(i=0;i<states.length;i++){
+        graphinfo.states[i] = {
+            title: "No name",
+            elementStates: [],
+            linkStates: []
+        }
+        state = graphinfo.states[i]; //shortcut
+        lines = states[i].split('\n');
+        state.title = lines.shift();
+        for(j=0;j<lines.length;j++){
+            tokens = lines[j].split(' ');
+            //process line as element
+            if(tokens.length == 2){
+                ename = tokens[0];
+                estate = tokens[1];
+                eindex = graphinfo.elements.indexOf(ename);
+                if(eindex == -1){
+                    graphinfo.elements.push(ename);
+                    eindex = graphinfo.elements.length-1;
+                }
+                state.elementStates[eindex] = estate;
+            }//end element parse
+            //process line as link
+            if(tokens.length == 3){
+                //get line data
+                fromNode = tokens[0];
+                toNode = tokens[1];
+                linkState = tokens[2];
+                //set up the elements of the link if needed
+                fromNodeIndex = graphinfo.elements.indexOf(fromNode);
+                toNodeIndex = graphinfo.elements.indexOf(toNode);
+                if(fromNodeIndex == -1){
+                    graphinfo.elements.push(fromNode)
+                    fromNodeIndex = graphinfo.elements.length-1;
+                    state.elementStates[fromNodeIndex] = 'active';
+                }
+                if(toNodeIndex == -1){
+                    graphinfo.elements.push(toNode)
+                    toNodeIndex = graphinfo.elements.length-1;
+                    state.elementStates[toNodeIndex] = 'active';
+                }
+                if(!state.elementStates[fromNodeIndex]) {
+                    state.elementStates[fromNodeIndex] = 'active';
+                }
+                if(!state.elementStates[toNodeIndex]) {
+                    state.elementStates[toNodeIndex] = 'active';
+                }
+                //set up the link
+                linkIndex = graphinfo.links.indexOf(fromNode+','+toNode);
+                if(linkIndex == -1){
+                    graphinfo.links.push(fromNode+','+toNode);
+                    linkIndex = graphinfo.links.length-1;
+                }
+                state.linkStates[linkIndex] = linkState;
+            }//end link parse
+        }//end line parse
+    }//end state parse
+    //clean up data
+    for(i=0;i<graphinfo.states.length;i++){
+        state = graphinfo.states[i]; //shortcut
+        for(j=0;j<graphinfo.elements.length;j++){
+            if(!state.elementStates[j]){
+                state.elementStates[j] = 'nonactive';
+            }
+        }
+        for(j=0;j<graphinfo.links.length;j++){
+            if(!state.linkStates[j]){
+                state.linkStates[j] = 'nonactive';
+            }
+        }
+    }
+    //create elements and links
+    for(i=0;i<graphinfo.elements.length;i++){
+        graphinfo.elements[i] = makeElement(graphinfo.elements[i]);
+    }
+    for(i=0;i<graphinfo.links.length;i++){
+        tofrom = graphinfo.links[i].split(',');
+        graphinfo.links[i] = makeLink(tofrom[0],tofrom[1]);
+    }
+    //return list of elements to graph
+    return graphinfo.elements.concat(graphinfo.links);
+}
+
+/*****************/
+/* file handling */
+/*****************/
+//handler for new file selection
+function handleFileSelect(event) {
+    $('#list').empty();
+    var files = event.target.files;
+    var f = files[0];
+    var reader = new FileReader();
+    reader.onload = function (e) {
+        filecontents = e.target.result;
+        //parse data into graphinfo and cells
+        cells = parseSimpleAdaptonView(filecontents);
+        //lay out the graph
+        graph.resetCells(cells);
+        joint.layout.DirectedGraph.layout(graph, { setLinkVertices: false });
+        //re-map elements to editable view elements for efficiency
+        for(i=0;i<graphinfo.elements.length;i++){
+            model = graphinfo.elements[i];
+            graphinfo.elements[i] = V(paper.findViewByModel(model).el);
+        }
+        for(i=0;i<graphinfo.links.length;i++){
+            model = graphinfo.links[i];
+            graphinfo.links[i] = V(paper.findViewByModel(model).el);
+        }
+        //set first states
+        graphinfo.currentState = 0;
+        for(i=0;i<graphinfo.elements.length;i++){
+            graphinfo.elements[i].addClass(graphinfo.states[0].elementStates[i]);
+        }
+        for(i=0;i<graphinfo.links.length;i++){
+            graphinfo.links[i].addClass(graphinfo.states[0].linkStates[i]);
+        }
+        //populate list box with states
+        for(i=0;i<graphinfo.states.length;i++){
+            $('#list').append('<option value="'+i+'">'+graphinfo.states[i].title+'</option>');
+        }
+    }//end file load handler
+    reader.readAsText(f)
+}
+/********************/
+/* listbox handling */
+/********************/
+function handleListSelect(event){
+    var newState = parseInt(event.target.value);
+    if(newState == -1) return;
+    //shortcuts
+    var eso = graphinfo.states[graphinfo.currentState].elementStates;
+    var lso = graphinfo.states[graphinfo.currentState].linkStates;
+    var esn = graphinfo.states[newState].elementStates;
+    var lsn = graphinfo.states[newState].linkStates;
+    //change the state of all the stored objects
+    for(i=0;i<graphinfo.elements.length;i++){
+        graphinfo.elements[i].removeClass(eso[i]).addClass(esn[i]);
+    }
+    for(i=0;i<graphinfo.links.length;i++){
+        graphinfo.links[i].removeClass(lso[i]).addClass(lsn[i]);
+    }
+    //set current state
+    graphinfo.currentState = newState;
+}
