@@ -204,9 +204,13 @@ function handleFileSelect(event) {
             graphinfo.links[i].addClass(graphinfo.states[0].linkStates[i]);
         }
         //populate list box with states
-        c=-1;
         for(i=0;i<graphinfo.states.length;i++){
-            $('#list').append('<option value="'+i+'c'+c+'">'+graphinfo.states[i].title+'</option>');
+            if(graphinfo.states[i].cstates && graphinfo.states[i].cstates.length){
+                for(c=0;c<graphinfo.states[i].cstates.length;c++){
+                    $('#list').append('<option value="'+i+'c+'+c+'+">'+graphinfo.states[i].title+'</option>');
+                }
+            }
+            $('#list').append('<option value="'+i+'c-1">'+graphinfo.states[i].title+'</option>');
         }
         console.log('ready for user interation');
     }//end file load handler
