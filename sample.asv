@@ -4,6 +4,19 @@ btw, anything that doesn't fit this pattern gets ignored
 any state can be defined in the css for visuals
 2 3 active
 4 unknown
+Change state: 4 active
+4 active
+Change state: 2 3 nonactive
+2 3 nonactive
+Change state: 3 4 active
+3 4 active
+Change state: 3 5 nonactive
+3 5 nonactive
+Change state: 2 3 active, 2 3 nonactive
+2 3 active
+2 3 nonactive
+Change state: 7 added
+7 added
 Graph state: Second
 2 3 active
 3 4 trouble
