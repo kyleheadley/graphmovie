@@ -19,7 +19,7 @@ var paper = new joint.dia.Paper({
     model: graph
 });
 //move the paper out from under the controls
-V(paper.viewport).translate(CONTROL_BAR_WIDTH + 2, 2);
+V(paper.viewport).translate(CONTROL_BAR_WIDTH + 2, 2).scale(0.5,0.5);
 
 /***********/
 /* Parsing */

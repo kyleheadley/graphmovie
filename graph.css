@@ -1,14 +1,32 @@
 /* graph element states */
 
 .frc .connection {
-    stroke: #101010;
-    stroke-dasharray: 10, 10;
-    stroke-width: 3px;
+  stroke: blue;
+  stroke-width: 5px;
 }
-
 .mut .connection {
-    stroke: #1010e0;
-    stroke-width: 3px;
+  stroke: green;
+  stroke-width: 10px;
+  stroke-dasharray: 10,20;
+}
+.refc-many rect {
+  stroke-width:5;
+  stroke:blue;
+  fill:#ccccff;
+}
+.refc-two rect {
+  stroke-width:3;
+  stroke:blue;
+  fill:#ccccff;
+}
+.refc-one rect {
+  stroke-width:1;
+  stroke:blue;
+  fill:#ccccff;
+}
+.refc-zero rect {
+  stroke-width:0;
+  fill:#ffcccc;
 }
 
 .nonactive .connection {
@@ -62,6 +80,12 @@
   right: 0px;
   bottom: 0px;
   z-index: -1; /*keep it under everything else */
+  size: 400%;
+}
+
+svg#v-3 {
+ fill:black;
+ padding:10px;
 }
 
 #list {
@@ -71,6 +95,7 @@
   top: 30px;
   left: 0px;
   width: 250px;
+  /*width:20%;*/
   bottom: 15px;
 }
 
@@ -80,4 +105,131 @@
    -webkit-svg-shadow: 2px 2px 5px gray;
    /* FF */
    filter: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='dropshadow' width='150%' height='150%'><feGaussianBlur in='SourceAlpha' stdDeviation='4'/><feOffset dx='3' dy='3' result='offsetblur'/><feFlood flood-color='gray' /><feComposite in2='offsetblur' operator='in' /><feMerge><feMergeNode /><feMergeNode in='SourceGraphic' /></feMerge></filter></svg>#dropshadow");
+}
+
+/* The following classes name small-step events that occur to nodes
+and edges.  Each event corresponds to small-step (O(1)-time operation)
+that occurs within the Adapton Library's change propagation
+algorithm. */
+
+.create-fresh-thunk rect {
+ stroke: #ffffcc;
+ stroke-width: 5px;
+ fill:#ffffbb;
+}
+
+.create-cached-thunk rect {
+ stroke: #ccffcc;
+ stroke-width: 5px;
+ fill:#bbffbb;
+}
+
+.refc-0 rect {
+ stroke-width: 0px;
+ fill:#999999;
+}
+
+.refc-1 rect {
+ stroke-width: 1px;
+}
+
+.refc-2 rect {
+ stroke-width: 3px;
+}
+
+.refc-3 rect {
+ stroke-width: 5px;
+}
+
+.refc-4 rect {
+ stroke-width: 7px;
+}
+
+.refc-5 rect {
+ stroke-width: 10px;
+}
+
+.undo-pre rect {
+ stroke: #333333;
+ fill:#222222;
+}
+
+.undo-post rect {
+ stroke: #222222;
+ fill:#111111;
+}
+
+.undo-skip rect {
+ stroke: blue;
+ fill:#9999ff;
+}
+
+.force-pre rect {
+ stroke: green;
+ fill:#99ff99;
+}
+
+.force-post rect {
+ stroke: blue;
+ fill:#ccccff;
+}
+
+.mark-filthy rect {
+ stroke: red;
+ fill:#ff8888;
+}
+
+.eval-pre rect {
+ stroke:green;
+ fill:#ffff99;
+}
+
+.eval-post rect {
+ stroke:green;
+ fill:#ffff99;
+}
+
+.dirty-pre rect {
+ stroke:red;
+ fill:#ff99bb;
+}
+
+.dirty-edge .connection {
+ stroke:red;
+ stroke-width: 5px;
+}
+
+.dirty-post rect {
+ stroke:red;
+ fill:#ffbbdd;
+}
+
+.clean-pre rect {
+ stroke: blue;
+ fill:#9999ff;
+}
+
+.clean-edge-pre .connection {
+ stroke: cyan;
+ stroke-width:10px;
+ stroke-dasharray: 10,20;
+}
+
+.clean-edge-post .connection {
+ stroke: blue;
+ stroke-width:5px;
+}
+
+.check-true rect {
+ stroke: darkblue;
+ fill:#9999ff;
+}
+
+.check-false rect {
+ stroke: lightblue;
+ fill:#9999ff;
+}
+
+.check-edge .connection {
+ stroke: darkblue;
 }
