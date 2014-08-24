@@ -4,18 +4,19 @@ btw, anything that doesn't fit this pattern gets ignored
 any state can be defined in the css for visuals
 2 3 active
 4 unknown
-Change state: 4 active
+Change state: a change
 4 active
-Change state: 2 3 nonactive
+Change state: another change
 2 3 nonactive
-Change state: 3 4 active
+Change state: double change
 3 4 active
-Change state: 3 5 nonactive
+its not a change but it does force the edge:
 3 5 nonactive
-Change state: 2 3 active, 2 3 nonactive
+4 missing
+Change state: do-nothing change
 2 3 active
 2 3 nonactive
-Change state: 7 added
+Change state: one last change
 7 added
 Graph state: Second
 2 3 active
