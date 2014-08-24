@@ -3,13 +3,25 @@
 /*************/
 
 //this is the only way I could get the layout the way I wanted it...
-var CONTROL_BAR_WIDTH = 250;
+var LEFT_CONTROL_BAR_WIDTH = 250;
+var TOP_CONTROL_BAR_HEIGHT = 30;
 
-//set the change handler
+//set the change handlers
 $('#file').change(handleFileSelect);
-//set the change handler
 $('#list').change(handleListSelect);
-var graphinfo = {};
+$('#mode').change(handleModeChange);
+$('#zoomnum').change(handleZoomText);
+
+//create global objects
+var graphinfo = {
+    states: [],
+    elements: [],
+    links: [],
+    zoom: 0.5,
+    width: 400,
+    height: 400,
+    mode: 'all'
+}
 var graph = new joint.dia.Graph;
 var paper = new joint.dia.Paper({
     el: $('#paper'),
@@ -19,60 +31,18 @@ var paper = new joint.dia.Paper({
     model: graph
 });
 //move the paper out from under the controls
-V(paper.viewport).translate(CONTROL_BAR_WIDTH + 2, 2).scale(0.5,0.5);
+V(paper.viewport).translate(LEFT_CONTROL_BAR_WIDTH + 2, TOP_CONTROL_BAR_HEIGHT + 2)
 
 /***********/
 /* Parsing */
 /***********/
 
-function makeLink(parentElementLabel, childElementLabel) {
-
-    return new joint.dia.Link({
-        source: { id: parentElementLabel },
-        target: { id: childElementLabel },
-        attrs: { '.marker-target': { d: 'M 4 0 L 0 2 L 4 4 z' } },
-        smooth: true
-    });
-}
-
-function makeElement(label) {
-
-    var maxLineLength = _.max(label.split('\n'), function(l) { return l.length; }).length;
-
-    // Compute width/height of the rectangle based on the number
-    // of lines in the label and the letter size. 0.6 * letterSize is
-    // an approximation of the monospace font letter width.
-    var letterSize = 8;
-    var width = 2 * (letterSize * (0.6 * maxLineLength + 1));
-    var height = 2 * ((label.split('\n').length + 1) * letterSize);
-
-    return new joint.shapes.basic.Rect({
-        id: label,
-        size: { width: width, height: height },
-        attrs: {
-            text: {
-                text: label,
-                'font-size': letterSize,
-                'font-family': 'monospace',
-                'transform': ''
-            },
-            rect: {
-                width: width, height: height,
-                rx: 5, ry: 5,
-                stroke: '#555'
-            }
-        }
-    });
-}
-
 // Parses a file, storing all the data into the graphinfo object
 // returns an array of graph elements
 function parseSimpleAdaptonView(text){
-    graphinfo = {
-        states: [],
-        elements: [],
-        links: []
-    }
+    graphinfo.states = [];
+    graphinfo.elements = [];
+    graphinfo.links = [];
     console.log('spliting on state');
     states = text.split('Graph state: ');
     //first line is the blank before the first state
@@ -158,6 +128,7 @@ function parseSimpleAdaptonView(text){
                         graphinfo.elements.push(ename);
                         eindex = graphinfo.elements.length-1;
                     }
+                    //TODO: get and save previous state for reverse-play
                     state.elementStates.push({i: eindex,s: estate});
                 }//end element parse
                 //process line as link
@@ -184,6 +155,7 @@ function parseSimpleAdaptonView(text){
                         graphinfo.links.push(fromNode+' '+toNode);
                         linkIndex = graphinfo.links.length-1;
                     }
+                    //TODO: get and save previous state for reverse-play
                     state.linkStates.push({i: linkIndex,s: linkState});
                 }//end link parse
             }//end change line parse
@@ -219,11 +191,9 @@ function parseSimpleAdaptonView(text){
 /* file handling */
 /*****************/
 //handler for new file selection
-function handleFileSelect(event) {
+function loadFile(fileName) {
     $('#list').empty();
-    var files = event.target.files;
-    var f = files[0];
-    var reader = new FileReader();
+   var reader = new FileReader();
     reader.onload = function (e) {
         console.log('file loaded');
         filecontents = e.target.result;
@@ -241,21 +211,25 @@ function handleFileSelect(event) {
             nodeSep: 5,
             rankDir: "BT"
         });
-        paper.setDimensions(CONTROL_BAR_WIDTH + size.width + 100, size.height + 100); //give some extra room for element sizes
+        //set paper size
+        var extra_space = 100;//give some extra space for repositioning
+        graphinfo.height = size.height + extra_space;
+        graphinfo.width = size.width + extra_space;
+        adjustPaper();
         console.log('layout complete')
         //re-map elements to editable view elements for efficiency
+        console.log('elements: '+graphinfo.elements.length);
         for(i=0;i<graphinfo.elements.length;i++){
             model = graphinfo.elements[i];
             graphinfo.elements[i] = V(paper.findViewByModel(model).el);
         }
+        console.log('links: '+graphinfo.links.length);
         for(i=0;i<graphinfo.links.length;i++){
             model = graphinfo.links[i];
             graphinfo.links[i] = V(paper.findViewByModel(model).el);
         }
         //set first states
         console.log('loading first states');
-        graphinfo.currentBState = 0;
-        graphinfo.currentCState = -1;
         graphinfo.currentFullState = {
             elementStates: [],
             linkStates: []
@@ -277,19 +251,19 @@ function handleFileSelect(event) {
                 }
             }
         }
+        //select the first state
+        graphinfo.currentBState = 0;
+        graphinfo.currentCState = -1;
+        $('#list').val('0c-1');
         console.log('ready for user interation');
     }//end file load handler
     console.log('loading file');
-    reader.readAsText(f);
+    reader.readAsText(fileName);
 }
-/********************/
-/* listbox handling */
-/********************/
-function handleListSelect(event){
-    var ss = event.target.value.split('c');
-    var baseState = parseInt(ss[0]);
-    var changeState = parseInt(ss[1]);
-
+/***********/
+/* Visuals */
+/***********/
+function refreshGraph(baseState, changeState){
     if(baseState == -1 || baseState == NaN) return;
     //shortcuts
     var eso = graphinfo.currentFullState.elementStates;
@@ -316,15 +290,23 @@ function handleListSelect(event){
     }else{
         //change the state of all the stored objects to the base state
         for(i=0;i<graphinfo.elements.length;i++){
-            if(esn[i] != eso[i]){
-                graphinfo.elements[i].removeClass(eso[i]).addClass(esn[i]);
-                eso[i] = esn[i];
+            var ns = esn[i];
+            if(graphinfo.mode == 'diff') {
+                 ns = 'nonactive'; 
+            }
+            if(ns != eso[i]){
+                graphinfo.elements[i].removeClass(eso[i]).addClass(ns);
+                eso[i] = ns;
             }
         }
         for(i=0;i<graphinfo.links.length;i++){
-            if(lsn[i] != lso[i]){
-                graphinfo.links[i].removeClass(lso[i]).addClass(lsn[i]);
-                lso[i]=lsn[i];
+            var ns = lsn[i];
+            if(graphinfo.mode == 'diff') {
+                 ns = 'nonactive'; 
+            }
+            if(ns != lso[i]){
+                graphinfo.links[i].removeClass(lso[i]).addClass(ns);
+                lso[i]=ns;
             }
         }
         //add all the changes
@@ -345,3 +327,95 @@ function handleListSelect(event){
     graphinfo.currentBState = baseState;
     graphinfo.currentCState = changeState;
 }
+
+/********************/
+/* Control Handling */
+/********************/
+function handleFileSelect(event) {
+    var files = event.target.files;
+    var f = files[0];
+    loadFile(f);
+    //allow user to use arrow keys without clicking
+    $('#list').focus();
+ }
+function handleListSelect(event){
+    var ss = event.target.value.split('c');
+    var bs = parseInt(ss[0]);
+    var cs = parseInt(ss[1]);
+    refreshGraph(bs,cs);
+}
+function handleModeChange(event) {
+    var ss = $('#list option:selected').val().split('c');
+    var bs = parseInt(ss[0]);
+    var cs = parseInt(ss[1]);
+
+    graphinfo.mode = event.target.value;
+    //force redraw
+    graphinfo.currentBState = -1;
+    refreshGraph(bs,cs);
+    //allow user to use arrow keys without clicking
+    $('#list').focus();
+}
+function handleZoomText(event){
+    graphinfo.zoom = parseFloat(event.target.value)/100;
+    adjustPaper();
+    //allow user to use arrow keys without clicking
+    $('#list').focus();
+}
+
+/***********/
+/* Helpers */
+/***********/
+function adjustPaper(){
+    var h = graphinfo.height;
+    var w = graphinfo.width;
+    var z = graphinfo.zoom;
+    //move the paper out from under the controls
+    V(paper.viewport).translate(-LEFT_CONTROL_BAR_WIDTH - 2, -TOP_CONTROL_BAR_HEIGHT - 2)
+    V(paper.viewport).scale(z,z);
+    V(paper.viewport).translate(LEFT_CONTROL_BAR_WIDTH + 2, TOP_CONTROL_BAR_HEIGHT + 2)
+    paper.setDimensions(
+        LEFT_CONTROL_BAR_WIDTH + w*z,
+        TOP_CONTROL_BAR_HEIGHT+ h*z
+    );
+}
+function makeLink(parentElementLabel, childElementLabel) {
+
+    return new joint.dia.Link({
+        source: { id: parentElementLabel },
+        target: { id: childElementLabel },
+        attrs: { '.marker-target': { d: 'M 4 0 L 0 2 L 4 4 z' } },
+        smooth: true
+    });
+}
+
+function makeElement(label) {
+
+    var maxLineLength = _.max(label.split('\n'), function(l) { return l.length; }).length;
+
+    // Compute width/height of the rectangle based on the number
+    // of lines in the label and the letter size. 0.6 * letterSize is
+    // an approximation of the monospace font letter width.
+    var letterSize = 8;
+    var width = 2 * (letterSize * (0.6 * maxLineLength + 1));
+    var height = 2 * ((label.split('\n').length + 1) * letterSize);
+
+    return new joint.shapes.basic.Rect({
+        id: label,
+        size: { width: width, height: height },
+        attrs: {
+            text: {
+                text: label,
+                'font-size': letterSize,
+                'font-family': 'monospace',
+                'transform': ''
+            },
+            rect: {
+                width: width, height: height,
+                rx: 5, ry: 5,
+                stroke: '#555'
+            }
+        }
+    });
+}
+

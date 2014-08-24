@@ -8,6 +8,14 @@
 <select id="list" size="2">
 	<option value="-1c-1">No file selected</option>
 </select>
+<div id="controls">
+	<select id="mode">
+		<option value="all" selected>View full state</option>
+		<option value="diff">Changes only</option>
+		<!--option value="no-change">Don't display changes</option-->
+	</select>
+	<input id="zoomnum" type="number" min="10" max="200" step="5" value="50"/>
+</div>
 <div id="paper"></div>
 
 <script type="text/javascript" src="lib/joint.min.js"></script>

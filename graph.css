@@ -95,8 +95,14 @@ svg#v-3 {
   top: 30px;
   left: 0px;
   width: 250px;
-  /*width:20%;*/
   bottom: 15px;
+}
+
+#controls {
+  position: fixed;
+  top: 0px;
+  botton: 20px;
+  left: 250px;
 }
 
 /* node shadow */
