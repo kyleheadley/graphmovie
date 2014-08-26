@@ -342,6 +342,26 @@ function handleListSelect(event){
     var ss = event.target.value.split('c');
     var bs = parseInt(ss[0]);
     var cs = parseInt(ss[1]);
+    if(graphinfo.mode == 'no-change'){
+        oldcs = graphinfo.currentCState;
+        oldbs = graphinfo.currentBState;
+        if(oldbs == bs){
+            //'down' in same state
+            if(oldcs < cs){
+                if(bs+1 < graphinfo.states.length){            
+                    bs += 1;
+                }
+            //'up' in same state
+            }else if(oldcs > cs){
+                if(bs > 0){            
+                    bs -= 1;
+                }
+            }
+        }
+        //in different state: just back up to state
+        cs = -1;
+    }
+    $('#list').val(bs+"c"+cs);
     refreshGraph(bs,cs);
 }
 function handleModeChange(event) {
