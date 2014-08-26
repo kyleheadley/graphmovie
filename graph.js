@@ -11,6 +11,8 @@ $('#file').change(handleFileSelect);
 $('#list').change(handleListSelect);
 $('#mode').change(handleModeChange);
 $('#zoomnum').change(handleZoomText);
+$('#style').change(handleStyleChange);
+$( document ).ready(init);
 
 //create global objects
 var graphinfo = {
@@ -191,9 +193,9 @@ function parseSimpleAdaptonView(text){
 /* file handling */
 /*****************/
 //handler for new file selection
-function loadFile(fileName) {
+function loadFile(file) {
     $('#list').empty();
-   var reader = new FileReader();
+    var reader = new FileReader();
     reader.onload = function (e) {
         console.log('file loaded');
         filecontents = e.target.result;
@@ -258,7 +260,7 @@ function loadFile(fileName) {
         console.log('ready for user interation');
     }//end file load handler
     console.log('loading file');
-    reader.readAsText(fileName);
+    reader.readAsText(file);
 }
 /***********/
 /* Visuals */
@@ -331,6 +333,10 @@ function refreshGraph(baseState, changeState){
 /********************/
 /* Control Handling */
 /********************/
+function init(){
+    handleStyleChange();
+}
+
 function handleFileSelect(event) {
     var files = event.target.files;
     var f = files[0];
@@ -380,6 +386,11 @@ function handleZoomText(event){
     graphinfo.zoom = parseFloat(event.target.value)/100;
     adjustPaper();
     //allow user to use arrow keys without clicking
+    $('#list').focus();
+}
+
+function handleStyleChange(){
+    $('#csschoice').prop('href',$('#style option:selected').val());
     $('#list').focus();
 }
 

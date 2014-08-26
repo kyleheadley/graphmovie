@@ -1,0 +1,28 @@
+.red .connection, .red rect {
+	stroke: red;
+	fill: lightpink;
+}
+.orange .connection, .orange rect {
+	stroke: orange;
+	fill: lightsalmon;
+}
+.yellow .connection, .yellow rect {
+	stroke: yellow;
+	fill: lightyellow;
+}
+.green .connection, .green rect {
+	stroke: green;
+	fill: lightgreen;
+}
+.blue .connection, .blue rect {
+	stroke: blue;
+	fill: lightblue;
+}
+.purple .connection, .purple rect {
+	stroke: purple;
+	fill: plum;
+}
+.black .connection, .black rect {
+	stroke: black;
+	fill: grey;
+}
