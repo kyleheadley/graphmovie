@@ -213,10 +213,9 @@ function loadFile(file) {
             nodeSep: 5,
             rankDir: "BT"
         });
-        //set paper size
-        var extra_space = 100;//give some extra space for repositioning
-        graphinfo.height = size.height + extra_space;
-        graphinfo.width = size.width + extra_space;
+        //set paper size, give plenty of room for panning
+        graphinfo.height = size.height + window.innerHeight;
+        graphinfo.width = size.width + window.innerWidth;
         adjustPaper();
         console.log('layout complete')
         //re-map elements to editable view elements for efficiency
