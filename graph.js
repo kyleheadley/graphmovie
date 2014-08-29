@@ -1,3 +1,11 @@
+//major
+//TODO: finish layout
+//TODO: rewrite refresh
+//TODO: write style.add()
+
+//minor
+//TODO: combine edge and node code where possible
+
 /*************/
 /* init      */
 /*************/
@@ -5,6 +13,12 @@
 //this is the only way I could get the layout the way I wanted it...
 var LEFT_CONTROL_BAR_WIDTH = 250;
 var TOP_CONTROL_BAR_HEIGHT = 30;
+
+var STATE_NONE = 'nonactive'; //default undeclared element
+var STATE_UNKNOWN = 'active'; //default undeclared state
+
+var STATUS_LOADING = 'loading';
+var STATUS_WAITING = 'waiting';
 
 //set the change handlers
 $('#file').change(handleFileSelect);
@@ -15,15 +29,19 @@ $('#style').change(handleStyleChange);
 $( document ).ready(init);
 
 //create global objects
-var graphinfo = {
-    states: [],
-    elements: [],
-    links: [],
+var moviedata = {
+    mode: 'all',
     zoom: 0.5,
     width: 400,
     height: 400,
-    mode: 'all'
+    firstUnloadedState: 0,
+    nodes: [],
+    nodeViews: [],
+    edges: [],
+    edgeViews: [],
+    states: []
 }
+
 var graph = new joint.dia.Graph;
 var paper = new joint.dia.Paper({
     el: $('#paper'),
@@ -32,12 +50,81 @@ var paper = new joint.dia.Paper({
     gridSize: 1,
     model: graph
 });
+
 //move the paper out from under the controls
 V(paper.viewport).translate(LEFT_CONTROL_BAR_WIDTH + 2, TOP_CONTROL_BAR_HEIGHT + 2)
 
 /***********/
 /* Parsing */
 /***********/
+
+var parser = {
+    useString: function(data){
+        parser.lines = data.split('\n');
+        parser.currentLine = 0;
+    },
+    parseLines: function(){
+        var tag, args, title, text;
+        var line = parser.lines[parser.currentLine];
+        var split = line.indexOf(']');
+        var el = line.slice(0,split);
+        if(el.shift() == '['){
+            args = el.split(' ');
+            //extract the first element
+            tag = args.shift();
+        }else{
+            //first line is without tag
+            args = [];
+            tag = '';
+        }
+        title = line.slice(split+1);
+        //find next line
+        var nextline = parser.currentLine+1;
+        while(nextline<paser.lines.length && parser.lines[nextLine][0]!='[') {
+            nextLine++;
+        }
+        //text is everything between last line and next
+        text = parser.lines.slice(parser.currentLine+1,nextLine).join('\n');
+        //report
+        parser.dispatch(tag, args, title, text);
+        //finalize
+        parser.currentLine++;
+        //repeat (or not)
+        if(parser.currentLine<parser.lines.length){         
+            _.delay(parser.parseLines, 50)
+        }else{
+            loader.finalize();
+        }
+    },
+    dispatch: function(tag, args, title, text){
+        switch tag {
+            case 'style':
+                style.add(args[0], title, text);
+                break;
+            case 'state':
+                loader.addState(title, text);
+                break;
+            case 'change':
+                loader.addChange(title, text);
+                break;
+            case 'node':
+                if(args.length >= 2){
+                    loader.addNode(args[0], args[1], title, text);
+                }else if(args.length == 1){
+                    loader.addNode(args[0], STATE_UNKNOWN, title, text);
+                }
+                break;
+            case 'edge':
+                if(args.length >= 4){
+                    loader.addEdge(args[0], args[1], args[2], args[3], title, text);
+                }else if(args.length == 3){
+                     loader.addEdge(args[0], args[1], '', args[3], title, text);
+                }else if(args.length == 2){
+                     loader.addEdge(args[0], args[1], '', STATE_UNKNOWN, title, text);
+                break;
+        }
+    }
+}
 
 // Parses a file, storing all the data into the graphinfo object
 // returns an array of graph elements
@@ -189,11 +276,202 @@ function parseSimpleAdaptonView(text){
     return graphinfo.elements.concat(graphinfo.links);
 }
 
+/*******************/
+/* Data processing */
+/*******************/
+
+var loader = {
+    currentState: -1,
+    currentChange: -1,
+    currentNodeStates: [],
+    currentEdgeStates: [],
+    addState: function(name, info){
+        //finalize previous
+        if(loader.currentState >= 0){
+            moviedata.states[loader.currentState].changes[loader.currentChange].$op.val(STATUS_WAITING).text('Awaiting Layout ...');
+        }
+        //new
+        var newState = {
+            nodeStates: [],
+            edgeStates: [],
+            changes: []
+        };
+        var firstChange = {
+            title: name,
+            info: info,
+            nodeDiffs: [],
+            edgeDiffs: []
+            $op = $('<option></option>')
+        };
+        loader.currentNodeStates = [];
+        for(var i = 0; i<moviedata.nodes.length; i++){
+            loader.currentNodeStates[i] = STATE_NONE;
+            newState.nodeStates[i] = {state: STATE_NONE, name: '', info: ''};
+        }
+        loader.currentEdgeStates = [];
+        for(var i = 0; i<moviedata.edges.length; i++){
+            loader.currentEdgeStates[i] = STATE_NONE;
+            newState.edgeStates[i] = {state: STATE_NONE, name: '', info: ''};
+        }
+        //increment
+        loader.currentState = moviedata.states.length;
+        loader.currentChange = 0;
+        //store
+        newState.changes.push(firstChange);
+        moviedata.states.push(newState);
+        //view
+        $('#list').append($op.val(STATUS_LOADING).text('Loading ...'));
+    },
+    addChange: function(name, info){
+        //init
+        if(loader.currentState == -1) loader.addState("None","");
+        var cs = movie.states[loader.currentState];
+        var cc = cs.changes[loader.currentChange];
+        //finalize previous
+        cs.changes[loader.currentChange].$op.val(STATUS_WAITING).text('Awaiting Layout ...');
+        for(var i = 0; i<cc.nodeDiffs.length; i++){
+            currentNodeStates[cc.nodeDiffs[i].index] = cc.nodeDiffs[i].state;
+        }
+        for(var i = 0; i<cc.edgeDiffs.length; i++){
+            currentEdgeStates[cc.edgeDiffs[i].index] = cc.edgeDiffs[i].state;
+        }
+        //new
+        var newChange = {
+            title: name,
+            info: info,
+            nodeStates: [],
+            edgeStates: []
+            $op = $('<option></option>')
+        };
+        //increment
+        loader.currentChange = cs.changeStates.length;
+        //store
+        cs.changes.push(newChange);
+        //view
+        $('#list').append($op.val(STATUS_LOADING).text('Loading ...'));
+
+    },
+    finalize: function(){
+        if(loader.currentState >= 0){
+            moviedata.states[loader.currentState].changes[loader.currentChange].$op.text('Awaiting Layout ...');
+        }
+        _.delay(loader.layout(), 50);
+    },
+    addNode: function(id, state, name, info){
+        //init
+        if(loader.currentState == -1) loader.addState("None","");
+        var cs = movie.states[loader.currentState];
+        var cc = cs.changes[loader.currentChange];
+        //create
+        var nodeIndex = loader.registerNode(id);
+        if(loader.currentChange == 0){
+            //base type
+            cs.nodeStates[nodeIndex] = {
+                state: state,
+                name: name,
+                info: info
+            };
+            currentNodeStates[nodeIndex] = state;
+        }else{
+            //change type
+            var newNode = {
+                index: nodeIndex,
+                state: state,
+                lastState: currentNodeStates[nodeIndex],
+                name: name,
+                info: info
+            }
+            cc.nodeDiffs.push(newNode);
+        }
+    },
+    addEdge: function(from, to, tag, state, name, info){
+        //init
+        if(loader.currentState == -1) loader.addState("None","");
+        var cs = movie.states[loader.currentState];
+        var cc = cs.changes[loader.currentChange];
+        //create
+        var edgeIndex = loader.registerEdge(from, to, tag);
+        if(loader.currentChange == 0){
+            //base type
+            cs.edgeStates[edgeIndex] = {
+                state: state,
+                name: name,
+                info: info
+            };
+            currentEdgeStates[edgeIndex] = state;
+        }else{
+            //change type
+            var newEdge = {
+                index: edgeIndex,
+                state: state,
+                lastState: currentEdgeStates[edgeIndex],
+                name: name,
+                info: info
+            }
+            cc.edgeDiffs.push(newEdge);
+        }
+    },
+    registerNode: function(id){
+        //find node
+        var nodeIndex = moviedata.nodes.indexOf(id);
+        if(nodeIndex == -1){
+            //setup node
+            nodeIndex = moviedata.nodes.length;
+            moviedata.nodes.push(id);
+            //retroactive add
+            loader.currentNodeStates[nodeIndex] = STATE_NONE;
+            for(var i = 0; i < movie.states.length){
+                movie.states[i].nodeStates[nodeIndex] = {state: STATE_NONE, name: '', info: ''};
+            }
+        }
+        return nodeIndex;
+    },
+    registerEdge: function(from, to, tag){
+        var id = [to, from, tag].join(' ');
+        //set up connected nodes
+        if(moviedata.nodes.indexOf(from) == -1){        
+            loader.addNode(from, STATE_UNKNOWN, from, '')
+        }
+        if(moviedata.nodes.indexOf(to) == -1){        
+            loader.addNode(to, STATE_UNKNOWN, to, '')
+        }
+        //find edge
+        var edgeIndex = moviedata.edges.indexOf(id);
+        if(edgeIndex == -1){
+            //set up edge
+            edgeIndex = moviedata.edges.length;
+            moviedata.edges.push(id);
+            //retroactive add
+            loader.currentEdgeStates[edgeIndex] = STATE_NONE;
+            for(var i = 0; i < movie.states.length){
+                movie.states[i].edgeStates[edgeIndex] = {state: STATE_NONE, name: '', info: ''};
+            }
+        }
+        return edgeIndex;
+    },
+    layout: function(){
+        //TODO: create elements here, store width and height data elsewhere
+        //TODO: layout
+        //TODO: setup '#list'
+    }
+
+}
+
 /*****************/
 /* file handling */
 /*****************/
 //handler for new file selection
 function loadFile(file) {
+    $('#list').empty();
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        parser.useString(e.target.result)
+        parser.parseLines();
+    }
+    reader.readAsText(file);
+}
+
+function oldLoadFile(file) {
     $('#list').empty();
     var reader = new FileReader();
     reader.onload = function (e) {
@@ -343,7 +621,8 @@ function handleFileSelect(event) {
     loadFile(f);
     //allow user to use arrow keys without clicking
     $('#list').focus();
- }
+}
+
 function handleListSelect(event){
     var ss = event.target.value.split('c');
     var bs = parseInt(ss[0]);
@@ -370,6 +649,7 @@ function handleListSelect(event){
     $('#list').val(bs+"c"+cs);
     refreshGraph(bs,cs);
 }
+
 function handleModeChange(event) {
     var ss = $('#list option:selected').val().split('c');
     var bs = parseInt(ss[0]);
@@ -382,6 +662,7 @@ function handleModeChange(event) {
     //allow user to use arrow keys without clicking
     $('#list').focus();
 }
+
 function handleZoomText(event){
     graphinfo.zoom = parseFloat(event.target.value)/100;
     adjustPaper();
@@ -410,6 +691,7 @@ function adjustPaper(){
         TOP_CONTROL_BAR_HEIGHT+ h*z
     );
 }
+
 function makeLink(parentElementLabel, childElementLabel) {
 
     return new joint.dia.Link({
