@@ -37,7 +37,7 @@
   height: 20px;
 }
 
-#paper {
+#primaryDisplay {
   overflow: scroll;
   position: fixed;
   top: 0px;

@@ -1,10 +1,11 @@
 //major
-//TODO: finish layout
 //TODO: rewrite refresh
 //TODO: write style.add()
+//TODO: debug
 
 //minor
 //TODO: combine edge and node code where possible
+//TODO: bind the external layout with the internal layout
 
 /*************/
 /* init      */
@@ -20,12 +21,8 @@ var STATE_UNKNOWN = 'active'; //default undeclared state
 var STATUS_LOADING = 'loading';
 var STATUS_WAITING = 'waiting';
 
-//set the change handlers
-$('#file').change(handleFileSelect);
-$('#list').change(handleListSelect);
-$('#mode').change(handleModeChange);
-$('#zoomnum').change(handleZoomText);
-$('#style').change(handleStyleChange);
+var NODE_TEXT_SIZE = 8;
+
 $( document ).ready(init);
 
 //create global objects
@@ -34,21 +31,33 @@ var moviedata = {
     zoom: 0.5,
     width: 400,
     height: 400,
-    firstUnloadedState: 0,
-    nodes: [],
+    firstUnLayedOutState: 0,
+    nodeIds: [],
     nodeViews: [],
-    edges: [],
+    nodeSize: [],
+    edgeIds: [],
     edgeViews: [],
-    states: []
+    states: [],
+    currentState: {b:-1,c:-1}
 }
 
-var graph = new joint.dia.Graph;
-var paper = new joint.dia.Paper({
-    el: $('#paper'),
+//create views
+var stage = $('<div id="stagingDisplay></div>')
+var mainGraph = new joint.dia.Graph;
+var stagingGraph = new joint.dia.Graph;
+var mainDisplay = new joint.dia.Paper({
+    el: $('#mainDisplay'),
     width: 200,
     height: 200,
     gridSize: 1,
-    model: graph
+    model: mainGraph
+});
+var stagingDisplay = new joint.dia.Paper({
+    el: stage,
+    width: 200,
+    height: 200,
+    gridSize: 1,
+    model: stagingGraph
 });
 
 //move the paper out from under the controls
@@ -88,7 +97,7 @@ var parser = {
         //report
         parser.dispatch(tag, args, title, text);
         //finalize
-        parser.currentLine++;
+        parser.currentLine = nextLine;
         //repeat (or not)
         if(parser.currentLine<parser.lines.length){         
             _.delay(parser.parseLines, 50)
@@ -304,12 +313,12 @@ var loader = {
             $op = $('<option></option>')
         };
         loader.currentNodeStates = [];
-        for(var i = 0; i<moviedata.nodes.length; i++){
+        for(var i = 0; i<moviedata.nodeIds.length; i++){
             loader.currentNodeStates[i] = STATE_NONE;
             newState.nodeStates[i] = {state: STATE_NONE, name: '', info: ''};
         }
         loader.currentEdgeStates = [];
-        for(var i = 0; i<moviedata.edges.length; i++){
+        for(var i = 0; i<moviedata.edgeIds.length; i++){
             loader.currentEdgeStates[i] = STATE_NONE;
             newState.edgeStates[i] = {state: STATE_NONE, name: '', info: ''};
         }
@@ -383,6 +392,10 @@ var loader = {
             }
             cc.nodeDiffs.push(newNode);
         }
+        //update size
+        os = moviedata.nodeSize[nodeIndex];
+        ns = calcSize(name);
+        moviedata.nodeSize[nodeIndex] = {width: max(os.width, ns.width), height: max(os.height, ns.height)};
     },
     addEdge: function(from, to, tag, state, name, info){
         //init
@@ -413,10 +426,10 @@ var loader = {
     },
     registerNode: function(id){
         //find node
-        var nodeIndex = moviedata.nodes.indexOf(id);
+        var nodeIndex = moviedata.nodeIds.indexOf(id);
         if(nodeIndex == -1){
             //setup node
-            nodeIndex = moviedata.nodes.length;
+            nodeIndex = moviedata.nodeIds.length;
             moviedata.nodes.push(id);
             //retroactive add
             loader.currentNodeStates[nodeIndex] = STATE_NONE;
@@ -424,6 +437,10 @@ var loader = {
                 movie.states[i].nodeStates[nodeIndex] = {state: STATE_NONE, name: '', info: ''};
             }
         }
+        //stage
+        moviedata.nodeViews[nodeIndex] = makeElement(id);
+        mainGraph.addCell(moviedata.nodeViews[nodeIndex]);
+
         return nodeIndex;
     },
     registerEdge: function(from, to, tag){
@@ -436,10 +453,10 @@ var loader = {
             loader.addNode(to, STATE_UNKNOWN, to, '')
         }
         //find edge
-        var edgeIndex = moviedata.edges.indexOf(id);
+        var edgeIndex = moviedata.edgeIds.indexOf(id);
         if(edgeIndex == -1){
             //set up edge
-            edgeIndex = moviedata.edges.length;
+            edgeIndex = moviedata.edgeIds.length;
             moviedata.edges.push(id);
             //retroactive add
             loader.currentEdgeStates[edgeIndex] = STATE_NONE;
@@ -447,12 +464,54 @@ var loader = {
                 movie.states[i].edgeStates[edgeIndex] = {state: STATE_NONE, name: '', info: ''};
             }
         }
+        //stage
+        moviedata.edgeViews[edgeIndex] = makeLink(to, from);
+        mainGraph.addCell(moviedata.edgeViews[edgeIndex]);
+
         return edgeIndex;
     },
     layout: function(){
-        //TODO: create elements here, store width and height data elsewhere
-        //TODO: layout
-        //TODO: setup '#list'
+        var totalStates = moviedata.states.length;
+        //reset all node sizes
+        for(var i=0; i<moviedata.nodeSize.length;i++){
+            moviedata.nodeViews[i].set('size', moviedata.nodeSize[i]);
+        }
+        //layout
+        var size = joint.layout.DirectedGraph.layout(mainGraph, {
+            setLinkVertices: false,
+            nodeSep: 5,
+            rankDir: "BT"
+        });
+        //cache the view elements
+        for(var i=0; i<moviedata.nodeViews.length; i++){
+            var model = moviedata.nodeViews[i];
+            moviedata.nodeViews[i] = V(mainDisplay.findViewByModel(model).el);
+        }
+        for(i=0;i<moviedata.edgeViews.length;i++){
+            var model = moviedata.edgeViews[i];
+            moviedata.links[i] = V(mainDisplay.findViewByModel(model).el);
+        }
+        //set paper size with extra space for repositioning
+        moviedata.height = size.height + window.height;
+        moviedata.width = size.width + window.width;
+        adjustPaper();
+        //setup first states
+        for(var i=0;i<moviedata.nodeViews.length;i++){
+            moviedata.nodeViews[i].addClass(moviedata.states[0].nodeStates[i]);
+        }
+        for(var i=0;i<moviedata.edgeViews.length;i++){
+            moviedata.edgeViews[i].addClass(moviedata.states[0].edgeStates[i]);
+        }
+        //setup '#list'
+        for(var i=0; i<moviedata.states.length){
+            for(var j=0; j<moviedata.states[i].changes.length){
+                var state = moviedata.states[i].changes[j];
+                state.$op.val(i+'c'+j).text(state.title);
+            }
+        }
+        //select the first state
+        moviedata.currentState = {b:0,c:0};
+        $('#list').val('0c0');
     }
 
 }
@@ -465,8 +524,13 @@ function loadFile(file) {
     $('#list').empty();
     var reader = new FileReader();
     reader.onload = function(e) {
+        //clear view
+        mainGraph.resetCells();
+        //prep parser
         parser.useString(e.target.result)
+        //parse data
         parser.parseLines();
+        //currently data displayed automatically at completion of parse
     }
     reader.readAsText(file);
 }
@@ -612,6 +676,13 @@ function refreshGraph(baseState, changeState){
 /* Control Handling */
 /********************/
 function init(){
+    //set the change handlers
+    $('#file').change(handleFileSelect);
+    $('#list').change(handleListSelect);
+    $('#mode').change(handleModeChange);
+    $('#zoomnum').change(handleZoomText);
+    $('#style').change(handleStyleChange);
+    //initial css load
     handleStyleChange();
 }
 
@@ -627,13 +698,13 @@ function handleListSelect(event){
     var ss = event.target.value.split('c');
     var bs = parseInt(ss[0]);
     var cs = parseInt(ss[1]);
-    if(graphinfo.mode == 'no-change'){
-        oldcs = graphinfo.currentCState;
-        oldbs = graphinfo.currentBState;
+    if(moviedata.mode == 'no-change'){
+        oldcs = moviedata.currentState.c;
+        oldbs = moviedata.currentState.b;
         if(oldbs == bs){
             //'down' in same state
             if(oldcs < cs){
-                if(bs+1 < graphinfo.states.length){            
+                if(bs < moviedata.states.length-1){            
                     bs += 1;
                 }
             //'up' in same state
@@ -644,7 +715,7 @@ function handleListSelect(event){
             }
         }
         //in different state: just back up to state
-        cs = -1;
+        cs = 0;
     }
     $('#list').val(bs+"c"+cs);
     refreshGraph(bs,cs);
@@ -655,23 +726,23 @@ function handleModeChange(event) {
     var bs = parseInt(ss[0]);
     var cs = parseInt(ss[1]);
 
-    graphinfo.mode = event.target.value;
+    moviedata.mode = event.target.value;
     //force redraw
-    graphinfo.currentBState = -1;
+    moviedata.currentState.b = -1;
     refreshGraph(bs,cs);
     //allow user to use arrow keys without clicking
     $('#list').focus();
 }
 
 function handleZoomText(event){
-    graphinfo.zoom = parseFloat(event.target.value)/100;
+    moviedata.zoom = parseFloat(event.target.value)/100;
     adjustPaper();
     //allow user to use arrow keys without clicking
     $('#list').focus();
 }
 
 function handleStyleChange(){
-    $('#csschoice').prop('href',$('#style option:selected').val());
+    $('#csschoice').prop('href','css/'+$('#style option:selected').val()+'.css');
     $('#list').focus();
 }
 
@@ -679,14 +750,14 @@ function handleStyleChange(){
 /* Helpers */
 /***********/
 function adjustPaper(){
-    var h = graphinfo.height;
-    var w = graphinfo.width;
-    var z = graphinfo.zoom;
+    var h = moviedata.height;
+    var w = moviedata.width;
+    var z = moviedata.zoom;
     //move the paper out from under the controls
-    V(paper.viewport).translate(-LEFT_CONTROL_BAR_WIDTH - 2, -TOP_CONTROL_BAR_HEIGHT - 2)
-    V(paper.viewport).scale(z,z);
-    V(paper.viewport).translate(LEFT_CONTROL_BAR_WIDTH + 2, TOP_CONTROL_BAR_HEIGHT + 2)
-    paper.setDimensions(
+    V(mainDisplay.viewport).translate(-LEFT_CONTROL_BAR_WIDTH - 2, -TOP_CONTROL_BAR_HEIGHT - 2)
+    V(mainDisplay.viewport).scale(z,z);
+    V(mainDisplay.viewport).translate(LEFT_CONTROL_BAR_WIDTH + 2, TOP_CONTROL_BAR_HEIGHT + 2)
+    mainDisplay.setDimensions(
         LEFT_CONTROL_BAR_WIDTH + w*z,
         TOP_CONTROL_BAR_HEIGHT+ h*z
     );
@@ -701,30 +772,32 @@ function makeLink(parentElementLabel, childElementLabel) {
         smooth: true
     });
 }
-
-function makeElement(label) {
-
-    var maxLineLength = _.max(label.split('\n'), function(l) { return l.length; }).length;
-
+function calcSize(label) {
+    var lines = label.split('\n');
+    var maxLineLength = _.max(lines, function(l) { return l.length; }).length;
     // Compute width/height of the rectangle based on the number
     // of lines in the label and the letter size. 0.6 * letterSize is
     // an approximation of the monospace font letter width.
-    var letterSize = 8;
-    var width = 2 * (letterSize * (0.6 * maxLineLength + 1));
-    var height = 2 * ((label.split('\n').length + 1) * letterSize);
+    var width = 2 * (NODE_TEXT_SIZE * (0.6 * maxLineLength + 1));
+    var height = 2 * ((lines.length + 1) * letterSize);
+    return {width: width, height: height};
 
+}
+
+function makeElement(label) {
+    var s = calcSize(label);
     return new joint.shapes.basic.Rect({
         id: label,
-        size: { width: width, height: height },
+        size: { width: s.w, height: s.h },
         attrs: {
             text: {
                 text: label,
-                'font-size': letterSize,
+                'font-size': NODE_TEXT_SIZE,
                 'font-family': 'monospace',
                 'transform': ''
             },
             rect: {
-                width: width, height: height,
+                width: s.w, height: s.h,
                 rx: 5, ry: 5,
                 stroke: '#555'
             }
