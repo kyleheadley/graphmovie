@@ -60,7 +60,7 @@ var stagingDisplay = new joint.dia.Paper({
 });
 
 //move the paper out from under the controls
-V(paper.viewport).translate(LEFT_CONTROL_BAR_WIDTH + 2, TOP_CONTROL_BAR_HEIGHT + 2)
+V(mainDisplay.viewport).translate(LEFT_CONTROL_BAR_WIDTH + 2, TOP_CONTROL_BAR_HEIGHT + 2)
 
 /***********/
 /* Parsing */
@@ -76,8 +76,8 @@ var parser = {
         var line = parser.lines[parser.currentLine];
         var split = line.indexOf(']');
         var el = line.slice(0,split);
-        if(el.shift() == '['){
-            args = el.split(' ');
+        if(el.charAt(0) == '['){
+            args = el.substr(1).split(' ');
             //extract the first element
             tag = args.shift();
         }else{
@@ -87,8 +87,8 @@ var parser = {
         }
         title = line.slice(split+1);
         //find next line
-        var nextline = parser.currentLine+1;
-        while(nextline<paser.lines.length && parser.lines[nextLine][0]!='[') {
+        var nextLine = parser.currentLine+1;
+        while(nextLine<parser.lines.length && parser.lines[nextLine][0]!='[') {
             nextLine++;
         }
         //text is everything between last line and next
@@ -105,7 +105,7 @@ var parser = {
         }
     },
     dispatch: function(tag, args, title, text){
-        switch tag {
+        switch (tag) {
             case 'style':
                 style.add(args[0], title, text);
                 break;
@@ -129,6 +129,7 @@ var parser = {
                      loader.addEdge(args[0], args[1], '', args[3], title, text);
                 }else if(args.length == 2){
                      loader.addEdge(args[0], args[1], '', STATE_UNKNOWN, title, text);
+                }
                 break;
         }
     }
@@ -158,8 +159,8 @@ var loader = {
             title: name,
             info: info,
             nodeDiffs: [],
-            edgeDiffs: []
-            $op = $('<option></option>')
+            edgeDiffs: [],
+            $op: $('<option></option>')
         };
         loader.currentNodeStates = [];
         for(var i = 0; i<moviedata.nodeIds.length; i++){
@@ -178,7 +179,7 @@ var loader = {
         newState.changes.push(firstChange);
         moviedata.states.push(newState);
         //view
-        $('#list').append($op.val(STATUS_LOADING).text('Loading ...'));
+        $('#list').append(firstChange.$op.val(STATUS_LOADING).text('Loading ...'));
     },
     addChange: function(name, info){
         //init
@@ -198,8 +199,8 @@ var loader = {
             title: name,
             info: info,
             nodeDiffs: [],
-            edgeDiffs: []
-            $op = $('<option></option>')
+            edgeDiffs: [],
+            $op: $('<option></option>')
         };
         //increment
         loader.currentChange = cs.changes.length;
@@ -238,7 +239,7 @@ var loader = {
     addNode: function(id, state, name, info){
         //init
         if(loader.currentState == -1) loader.addState("None","");
-        var cs = movie.states[loader.currentState];
+        var cs = moviedata.states[loader.currentState];
         var cc = cs.changes[loader.currentChange];
         //create
         var nodeIndex = loader.registerNode(id);
@@ -249,14 +250,14 @@ var loader = {
                 name: name,
                 info: info
             };
-            currentNodeStates[nodeIndex] = state;
+            loader.currentNodeStates[nodeIndex] = state;
         //change type
         }else{
             oldIndex = findObjectIndex(cc.nodeDiffs, nodeIndex);
             var newNode = {
                 index: nodeIndex,
                 state: state,
-                lastState: currentNodeStates[nodeIndex],
+                lastState: loader.currentNodeStates[nodeIndex],
                 name: name,
                 info: info
             }
@@ -274,7 +275,7 @@ var loader = {
     addEdge: function(from, to, tag, state, name, info){
         //init
         if(loader.currentState == -1) loader.addState("None","");
-        var cs = movie.states[loader.currentState];
+        var cs = moviedata.states[loader.currentState];
         var cc = cs.changes[loader.currentChange];
         //create
         var edgeIndex = loader.registerEdge(from, to, tag);
@@ -285,14 +286,14 @@ var loader = {
                 name: name,
                 info: info
             };
-            currentEdgeStates[edgeIndex] = state;
+            loader.currentEdgeStates[edgeIndex] = state;
         //change type
         }else{
             oldIndex = findObjectIndex(cc.edgeDiffs, edgeIndex);
             var newEdge = {
                 index: edgeIndex,
                 state: state,
-                lastState: currentEdgeStates[edgeIndex],
+                lastState: loader.currentEdgeStates[edgeIndex],
                 name: name,
                 info: info
             }
@@ -309,11 +310,11 @@ var loader = {
         if(nodeIndex == -1){
             //setup node
             nodeIndex = moviedata.nodeIds.length;
-            moviedata.nodes.push(id);
+            moviedata.nodeIds.push(id);
             //retroactive add
             loader.currentNodeStates[nodeIndex] = STATE_NONE;
-            for(var i = 0; i < movie.states.length){
-                movie.states[i].nodeStates[nodeIndex] = {state: STATE_NONE, name: '', info: ''};
+            for(var i = 0; i < moviedata.states.length; i++){
+                moviedata.states[i].nodeStates[nodeIndex] = {state: STATE_NONE, name: '', info: ''};
             }
         }
         //stage
@@ -325,10 +326,10 @@ var loader = {
     registerEdge: function(from, to, tag){
         var id = [to, from, tag].join(' ');
         //set up connected nodes
-        if(moviedata.nodes.indexOf(from) == -1){        
+        if(moviedata.nodeIds.indexOf(from) == -1){        
             loader.addNode(from, STATE_UNKNOWN, from, '')
         }
-        if(moviedata.nodes.indexOf(to) == -1){        
+        if(moviedata.nodeIds.indexOf(to) == -1){        
             loader.addNode(to, STATE_UNKNOWN, to, '')
         }
         //find edge
@@ -339,7 +340,7 @@ var loader = {
             moviedata.edges.push(id);
             //retroactive add
             loader.currentEdgeStates[edgeIndex] = STATE_NONE;
-            for(var i = 0; i < movie.states.length){
+            for(var i = 0; i < movie.states.length; i++){
                 movie.states[i].edgeStates[edgeIndex] = {state: STATE_NONE, name: '', info: ''};
             }
         }
@@ -371,8 +372,8 @@ var loader = {
             moviedata.links[i] = V(mainDisplay.findViewByModel(model).el);
         }
         //set paper size with extra space for repositioning
-        moviedata.height = size.height + window.height;
-        moviedata.width = size.width + window.width;
+        moviedata.height = size.height + window.innerHeight;
+        moviedata.width = size.width + window.innerWidth;
         adjustPaper();
         //setup first states
         for(var i=0;i<moviedata.nodeViews.length;i++){
@@ -382,8 +383,8 @@ var loader = {
             moviedata.edgeViews[i].addClass(moviedata.states[0].edgeStates[i]);
         }
         //setup '#list'
-        for(var i=0; i<moviedata.states.length){
-            for(var j=0; j<moviedata.states[i].changes.length){
+        for(var i=0; i<moviedata.states.length; i++){
+            for(var j=0; j<moviedata.states[i].changes.length; j++){
                 var state = moviedata.states[i].changes[j];
                 state.$op.val(i+'c'+j).text(state.title);
             }
@@ -391,6 +392,8 @@ var loader = {
         //select the first state
         moviedata.currentState = {b:0,c:0};
         $('#list').val('0c0');
+        //allow user to use arrow keys without clicking
+        $('#list').focus();
     }
 
 }
@@ -419,7 +422,7 @@ function loadFile(file) {
 /***********/
 function refreshGraph(baseState, changeState){
     //non-cases
-    if(baseState == -1 || baseState == NaN) return;
+    if(baseState == -1 || isNaN(baseState)) return;
     if(baseState == moviedata.currentState.b &&
         changeState == moviedata.currentState.c) return;
 
@@ -480,7 +483,7 @@ function refreshGraph(baseState, changeState){
             }
         }
         //change all the rest of the objects to the base state
-        for(var i=0; i<moviedata.nodes.length; i++){
+        for(var i=0; i<moviedata.nodeIds.length; i++){
             var os = moviedata.states[moviedata.currentState.b].nodeStates[i];
             var ns = moviedata.states[changeState].nodeStates[i];
             if(moviedata.mode == 'diff') ns = STATE_NONE;
@@ -517,7 +520,7 @@ function refreshGraph(baseState, changeState){
     }
     //set current state
     moviedata.currentState.b = baseState;
-    graphinfo.currentState.c = changeState;
+    moviedata.currentState.c = changeState;
 }
 
 /********************/
@@ -578,8 +581,6 @@ function handleModeChange(event) {
     //force redraw
     moviedata.currentState.b = -1;
     refreshGraph(bs,cs);
-    //allow user to use arrow keys without clicking
-    $('#list').focus();
 }
 
 function handleZoomText(event){
@@ -612,13 +613,13 @@ function adjustPaper(){
 }
 
 function makeLink(parentElementLabel, childElementLabel) {
-
-    return new joint.dia.Link({
+    var link = new joint.dia.Link({
         source: { id: parentElementLabel },
         target: { id: childElementLabel },
         attrs: { '.marker-target': { d: 'M 4 0 L 0 2 L 4 4 z' } },
         smooth: true
     });
+    return link;
 }
 function calcSize(label) {
     var lines = label.split('\n');
@@ -627,16 +628,16 @@ function calcSize(label) {
     // of lines in the label and the letter size. 0.6 * letterSize is
     // an approximation of the monospace font letter width.
     var width = 2 * (NODE_TEXT_SIZE * (0.6 * maxLineLength + 1));
-    var height = 2 * ((lines.length + 1) * letterSize);
+    var height = 2 * ((lines.length + 1) * NODE_TEXT_SIZE);
     return {width: width, height: height};
 
 }
 
 function makeElement(label) {
     var s = calcSize(label);
-    return new joint.shapes.basic.Rect({
+    var element = new joint.shapes.basic.Rect({
         id: label,
-        size: { width: s.w, height: s.h },
+        size: { width: s.width, height: s.height },
         attrs: {
             text: {
                 text: label,
@@ -645,12 +646,13 @@ function makeElement(label) {
                 'transform': ''
             },
             rect: {
-                width: s.w, height: s.h,
+                width: s.width, height: s.height,
                 rx: 5, ry: 5,
                 stroke: '#555'
             }
         }
     });
+    return element;
 }
 
 function findObjectIndex(arr, index){

@@ -67,7 +67,7 @@
 #controls {
   position: fixed;
   top: 0px;
-  bottom: 20px;
+  height: 25px;
   left: 250px;
 }
 
