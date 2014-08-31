@@ -1,5 +1,4 @@
 //major
-//TODO: rewrite refresh
 //TODO: write style.add()
 //TODO: debug
 
@@ -135,156 +134,6 @@ var parser = {
     }
 }
 
-// Parses a file, storing all the data into the graphinfo object
-// returns an array of graph elements
-function parseSimpleAdaptonView(text){
-    graphinfo.states = [];
-    graphinfo.elements = [];
-    graphinfo.links = [];
-    console.log('spliting on state');
-    states = text.split('Graph state: ');
-    //first line is the blank before the first state
-    states.shift();
-    for(i=0;i<states.length;i++){
-        console.log('starting parse of state '+i);
-        graphinfo.states[i] = {
-            title: "No name",
-            elementStates: [],
-            linkStates: [],
-            cstates: []
-        }
-        var state = graphinfo.states[i]; //shortcut
-        var changestates = states[i].split('Change state: ');
-        //first entry is the main state
-        var lines = changestates[0].split('\n');
-        state.title = lines.shift();
-        for(j=0;j<lines.length;j++){
-            tokens = lines[j].split(' ');
-            //process line as element
-            if(tokens.length == 2){
-                ename = tokens[0];
-                estate = tokens[1];
-                eindex = graphinfo.elements.indexOf(ename);
-                if(eindex == -1){
-                    graphinfo.elements.push(ename);
-                    eindex = graphinfo.elements.length-1;
-                }
-                state.elementStates[eindex] = estate;
-            }//end element parse
-            //process line as link
-            if(tokens.length == 3){
-                //get line data
-                fromNode = tokens[0];
-                toNode = tokens[1];
-                linkState = tokens[2];
-                //set up the elements of the link if needed
-                fromNodeIndex = graphinfo.elements.indexOf(fromNode);
-                toNodeIndex = graphinfo.elements.indexOf(toNode);
-                if(fromNodeIndex == -1){
-                    graphinfo.elements.push(fromNode)
-                    fromNodeIndex = graphinfo.elements.length-1;
-                    state.elementStates[fromNodeIndex] = 'active';
-                }
-                if(toNodeIndex == -1){
-                    graphinfo.elements.push(toNode)
-                    toNodeIndex = graphinfo.elements.length-1;
-                    state.elementStates[toNodeIndex] = 'active';
-                }
-                if(!state.elementStates[fromNodeIndex]) {
-                    state.elementStates[fromNodeIndex] = 'active';
-                }
-                if(!state.elementStates[toNodeIndex]) {
-                    state.elementStates[toNodeIndex] = 'active';
-                }
-                //set up the link
-                linkIndex = graphinfo.links.indexOf(fromNode+' '+toNode);
-                if(linkIndex == -1){
-                    graphinfo.links.push(fromNode+' '+toNode);
-                    linkIndex = graphinfo.links.length-1;
-                }
-                state.linkStates[linkIndex] = linkState;
-            }//end link parse
-        }//end main state line parse
-        //parse the rest of the change states
-        for(j=1;j<changestates.length;j++){
-            graphinfo.states[i].cstates[j-1] = {
-                title: "No name",
-                elementStates: [],
-                linkStates: [],
-            }
-            state = graphinfo.states[i].cstates[j-1]; //shortcut
-            lines = changestates[j].split('\n');
-            state.title = lines.shift();
-            for(k=0;k<lines.length;k++){
-                tokens = lines[k].split(' ');
-                //process line as element
-                if(tokens.length == 2){
-                    ename = tokens[0];
-                    estate = tokens[1];
-                    eindex = graphinfo.elements.indexOf(ename);
-                    if(eindex == -1){
-                        graphinfo.elements.push(ename);
-                        eindex = graphinfo.elements.length-1;
-                    }
-                    //TODO: get and save previous state for reverse-play
-                    state.elementStates.push({i: eindex,s: estate});
-                }//end element parse
-                //process line as link
-                if(tokens.length == 3){
-                    //get line data
-                    fromNode = tokens[0];
-                    toNode = tokens[1];
-                    linkState = tokens[2];
-                    //set up the elements of the link if needed
-                    fromNodeIndex = graphinfo.elements.indexOf(fromNode);
-                    toNodeIndex = graphinfo.elements.indexOf(toNode);
-                    //TODO: these missing nodes should probably be activated along with the link creation
-                    if(fromNodeIndex == -1){
-                        graphinfo.elements.push(fromNode)
-                        fromNodeIndex = graphinfo.elements.length-1;
-                    }
-                    if(toNodeIndex == -1){
-                        graphinfo.elements.push(toNode)
-                        toNodeIndex = graphinfo.elements.length-1;
-                    }
-                    //set up the link
-                    linkIndex = graphinfo.links.indexOf(fromNode+' '+toNode);
-                    if(linkIndex == -1){
-                        graphinfo.links.push(fromNode+' '+toNode);
-                        linkIndex = graphinfo.links.length-1;
-                    }
-                    //TODO: get and save previous state for reverse-play
-                    state.linkStates.push({i: linkIndex,s: linkState});
-                }//end link parse
-            }//end change line parse
-        }//end change state parse
-    }//end graph state parse
-    //clean up data
-    for(i=0;i<graphinfo.states.length;i++){
-        var state = graphinfo.states[i]; //shortcut
-        for(j=0;j<graphinfo.elements.length;j++){
-            if(!state.elementStates[j]){
-                state.elementStates[j] = 'nonactive';
-            }
-        }
-        for(j=0;j<graphinfo.links.length;j++){
-            if(!state.linkStates[j]){
-                state.linkStates[j] = 'nonactive';
-            }
-        }
-    }
-    //create elements and links
-    for(i=0;i<graphinfo.elements.length;i++){
-        graphinfo.elements[i] = makeElement(graphinfo.elements[i]);
-    }
-    for(i=0;i<graphinfo.links.length;i++){
-        var tofrom = graphinfo.links[i].split(' ');
-        graphinfo.links[i] = makeLink(tofrom[0],tofrom[1]);
-    }
-    //return list of elements to graph
-    return graphinfo.elements.concat(graphinfo.links);
-}
-
 /*******************/
 /* Data processing */
 /*******************/
@@ -348,12 +197,32 @@ var loader = {
         var newChange = {
             title: name,
             info: info,
-            nodeStates: [],
-            edgeStates: []
+            nodeDiffs: [],
+            edgeDiffs: []
             $op = $('<option></option>')
         };
         //increment
-        loader.currentChange = cs.changeStates.length;
+        loader.currentChange = cs.changes.length;
+        for(var i=0; i<nodeDiffs.length; i++){
+            var copiedDiff = {
+                index: cc.nodeDiffs[i].index,
+                state: cc.nodeDiffs[i].state,
+                lastState: cc.nodeDiffs[i].state,
+                name: cc.nodeDiffs[i].name,
+                info: cc.nodeDiffs[i].info                
+            }
+            newChange.nodeDiffs.push(copiedDiff)
+        }
+        for(var i=0; i<edgeDiffs.length; i++){
+            var copiedDiff = {
+                index: cc.edgeDiffs[i].index,
+                state: cc.edgeDiffs[i].state,
+                lastState: cc.edgeDiffs[i].state,
+                name: cc.edgeDiffs[i].name,
+                info: cc.edgeDiffs[i].info                
+            }
+            newChange.edgeDiffs.push(copiedDiff)
+        }
         //store
         cs.changes.push(newChange);
         //view
@@ -373,16 +242,17 @@ var loader = {
         var cc = cs.changes[loader.currentChange];
         //create
         var nodeIndex = loader.registerNode(id);
+        //base type
         if(loader.currentChange == 0){
-            //base type
             cs.nodeStates[nodeIndex] = {
                 state: state,
                 name: name,
                 info: info
             };
             currentNodeStates[nodeIndex] = state;
+        //change type
         }else{
-            //change type
+            oldIndex = findObjectIndex(cc.nodeDiffs, nodeIndex);
             var newNode = {
                 index: nodeIndex,
                 state: state,
@@ -390,7 +260,11 @@ var loader = {
                 name: name,
                 info: info
             }
-            cc.nodeDiffs.push(newNode);
+            if(oldIndex = -1){    
+                cc.nodeDiffs.push(newNode);
+            }else{
+                cc.nodeDiffs[oldIndex] = newNode;
+            }
         }
         //update size
         os = moviedata.nodeSize[nodeIndex];
@@ -404,16 +278,17 @@ var loader = {
         var cc = cs.changes[loader.currentChange];
         //create
         var edgeIndex = loader.registerEdge(from, to, tag);
+        //base type
         if(loader.currentChange == 0){
-            //base type
             cs.edgeStates[edgeIndex] = {
                 state: state,
                 name: name,
                 info: info
             };
             currentEdgeStates[edgeIndex] = state;
+        //change type
         }else{
-            //change type
+            oldIndex = findObjectIndex(cc.edgeDiffs, edgeIndex);
             var newEdge = {
                 index: edgeIndex,
                 state: state,
@@ -421,7 +296,11 @@ var loader = {
                 name: name,
                 info: info
             }
-            cc.edgeDiffs.push(newEdge);
+            if(oldIndex = -1){    
+                cc.edgeDiffs.push(newEdge);
+            }else{
+                cc.edgeDiffs[oldIndex] = newEdge;
+            }
         }
     },
     registerNode: function(id){
@@ -535,141 +414,110 @@ function loadFile(file) {
     reader.readAsText(file);
 }
 
-function oldLoadFile(file) {
-    $('#list').empty();
-    var reader = new FileReader();
-    reader.onload = function (e) {
-        console.log('file loaded');
-        filecontents = e.target.result;
-        //parse data into graphinfo and cells
-        console.log('starting parse');
-        cells = parseSimpleAdaptonView(filecontents);
-        console.log('parse complete');
-        //lay out the graph
-        console.log('starting graph generation');
-        graph.resetCells(cells);
-        console.log('generation complete');
-        console.log('starting layout');
-        var size = joint.layout.DirectedGraph.layout(graph, {
-            setLinkVertices: false,
-            nodeSep: 5,
-            rankDir: "BT"
-        });
-        //set paper size
-        var extra_space = 100;//give some extra space for repositioning
-        graphinfo.height = size.height + extra_space;
-        graphinfo.width = size.width + extra_space;
-        adjustPaper();
-        console.log('layout complete')
-        //re-map elements to editable view elements for efficiency
-        console.log('elements: '+graphinfo.elements.length);
-        for(i=0;i<graphinfo.elements.length;i++){
-            model = graphinfo.elements[i];
-            graphinfo.elements[i] = V(paper.findViewByModel(model).el);
-        }
-        console.log('links: '+graphinfo.links.length);
-        for(i=0;i<graphinfo.links.length;i++){
-            model = graphinfo.links[i];
-            graphinfo.links[i] = V(paper.findViewByModel(model).el);
-        }
-        //set first states
-        console.log('loading first states');
-        graphinfo.currentFullState = {
-            elementStates: [],
-            linkStates: []
-        }
-        for(i=0;i<graphinfo.elements.length;i++){
-            graphinfo.elements[i].addClass(graphinfo.states[0].elementStates[i]);
-            graphinfo.currentFullState.elementStates[i] = graphinfo.states[0].elementStates[i];
-        }
-        for(i=0;i<graphinfo.links.length;i++){
-            graphinfo.links[i].addClass(graphinfo.states[0].linkStates[i]);
-            graphinfo.currentFullState.linkStates[i] = graphinfo.states[0].linkStates[i];
-        }
-        //populate list box with states
-        for(i=0;i<graphinfo.states.length;i++){
-            $('#list').append('<option value="'+i+'c-1">'+graphinfo.states[i].title+'</option>');
-            if(graphinfo.states[i].cstates && graphinfo.states[i].cstates.length){
-                for(c=0;c<graphinfo.states[i].cstates.length;c++){
-                    $('#list').append('<option value="'+i+'c'+c+'">-'+graphinfo.states[i].cstates[c].title+'</option>');
-                }
-            }
-        }
-        //select the first state
-        graphinfo.currentBState = 0;
-        graphinfo.currentCState = -1;
-        $('#list').val('0c-1');
-        console.log('ready for user interation');
-    }//end file load handler
-    console.log('loading file');
-    reader.readAsText(file);
-}
 /***********/
 /* Visuals */
 /***********/
 function refreshGraph(baseState, changeState){
+    //non-cases
     if(baseState == -1 || baseState == NaN) return;
-    //shortcuts
-    var eso = graphinfo.currentFullState.elementStates;
-    var lso = graphinfo.currentFullState.linkStates;
-    var esn = graphinfo.states[baseState].elementStates;
-    var lsn = graphinfo.states[baseState].linkStates;
+    if(baseState == moviedata.currentState.b &&
+        changeState == moviedata.currentState.c) return;
 
-    //forward within the same base state
-    if(graphinfo.currentBState == baseState && graphinfo.currentCState < changeState){
-        //only load the changes
-        for(cs=graphinfo.currentCState+1;cs<=changeState;cs++){
-            var ecs = graphinfo.states[baseState].cstates[cs].elementStates;
-            var lcs = graphinfo.states[baseState].cstates[cs].linkStates;
-            for(c=0;c<ecs.length;c++){
-                graphinfo.elements[ecs[c].i].removeClass(eso[ecs[c].i]).addClass(ecs[c].s);
-                eso[ecs[c].i] = ecs[c].s;                
+    // +/-1 within the same base state (for speed)
+    if(moviedata.currentState.b == baseState){
+        //forward
+        if(moviedata.currentState.c+1 == changeState){
+            for(var cs=moviedata.currentState.c+1;cs<=changeState;cs++){
+                var ncs = moviedata.states[baseState].changes[cs].nodeDiffs
+                for(var n=0;n<ncs.length;n++){
+                    if(ncs[n].state != ncs[n].lastState){
+                        moviedata.nodeViews[ncs[n].index].removeClass(ncs[n].lastState).addClass(ncs[n].state);
+                    }
+                }
+                var ecs = moviedata.states[baseState].changes[cs].edgeDiffs
+                for(var e=0;e<ecs.length;e++){
+                    if(ecs[e].state != ecs[e].lastState){
+                        moviedata.nodeViews[ecs[e].index].removeClass(ecs[e].lastState).addClass(ecs[e].state);
+                    }
+                }
             }
-            for(c=0;c<lcs.length;c++){
-                graphinfo.links[lcs[c].i].removeClass(lso[lcs[c].i]).addClass(lcs[c].s);
-                lso[lcs[c].i] = lcs[c].s;
+        //backwards
+        }else if(moviedata.currentState.c-1 == changeState){
+            for(var cs=moviedata.currentState.c;cs>changestate;cs--){
+                var ncs = moviedata.states[baseState].changes[cs].nodeDiffs
+                for(var n=0;n<ncs.length;n++){
+                    if(ncs[n].state != ncs[n].lastState){
+                        moviedata.nodeViews[ncs[n].index].removeClass(ncs[n].state).addClass(ncs[n].lastState);
+                    }
+                }
+                var ecs = moviedata.states[baseState].changes[cs].edgeDiffs
+                for(var e=0;e<ecs.length;e++){
+                    if(ecs[e].state != ecs[e].lastState){
+                        moviedata.nodeViews[ecs[e].index].removeClass(ecs[e].state).addClass(ecs[e].lastState);
+                    }
+                }                
             }
         }
     //arbitrary change of states
     }else{
-        //change the state of all the stored objects to the base state
-        for(i=0;i<graphinfo.elements.length;i++){
-            var ns = esn[i];
-            if(graphinfo.mode == 'diff') {
-                 ns = 'nonactive'; 
+        //change the state of all changed objects to the base state
+        var cc = moviedata.states[moviedata.currentState.b].changes[moviedata.currentState.c];
+        for(var i=0;i<cc.nodeDiffs.length;i++){
+            var diff = cc.nodeDiffs[i]
+            var ns = moviedata.states[baseState].nodeStates[diff.index];
+            if(moviedata.mode == 'diff') ns = STATE_NONE;
+            if(ns != diff.state){
+                moviedata.nodeViews[diff.index].removeClass(diff.state).addClass(ns);
             }
-            if(ns != eso[i]){
-                graphinfo.elements[i].removeClass(eso[i]).addClass(ns);
-                eso[i] = ns;
+            //TODO: change name
+        }
+        for(var i=0;i<cc.edgeDiffs.length;i++){
+            var diff = cc.edgeDiffs[i]
+            var ns = moviedata.states[baseState].edgeStates[diff.index];
+            if(moviedata.mode == 'diff') ns = STATE_NONE;
+            if(ns != diff.state){
+                moviedata.edgeViews[diff.index].removeClass(diff.state).addClass(ns);
             }
         }
-        for(i=0;i<graphinfo.links.length;i++){
-            var ns = lsn[i];
-            if(graphinfo.mode == 'diff') {
-                 ns = 'nonactive'; 
+        //change all the rest of the objects to the base state
+        for(var i=0; i<moviedata.nodes.length; i++){
+            var os = moviedata.states[moviedata.currentState.b].nodeStates[i];
+            var ns = moviedata.states[changeState].nodeStates[i];
+            if(moviedata.mode == 'diff') ns = STATE_NONE;
+            if(ns != os){
+                moviedata.nodeViews[i].removeClass(os).addClass(ns);
             }
-            if(ns != lso[i]){
-                graphinfo.links[i].removeClass(lso[i]).addClass(ns);
-                lso[i]=ns;
+            //TODO: change name
+        }
+        for(var i=0; i<moviedata.edges.length; i++){
+            var os = moviedata.states[moviedata.currentState.b].edgeStates[i];
+            var ns = moviedata.states[changeState].edgeStates[i];
+            if(moviedata.mode == 'diff') ns = STATE_NONE;
+            if(ns != os){
+                moviedata.egdeViews[i].removeClass(os).addClass(ns);
             }
         }
-        //add all the changes
-        for(cs=0;cs<=changeState;cs++){
-            var ecs = graphinfo.states[baseState].cstates[cs].elementStates;
-            var lcs = graphinfo.states[baseState].cstates[cs].linkStates;
-            for(c=0;c<ecs.length;c++){
-                graphinfo.elements[ecs[c].i].removeClass(eso[ecs[c].i]).addClass(ecs[c].s);
-                eso[ecs[c].i] = ecs[c].s;
+        //add the new changes
+        var nc = moviedata.states[baseState].changes[changeState];
+        for(i=0;i<nc.nodeDiffs.length;i++){
+            var diff = nc.nodeDiffs[i]
+            var os = moviedata.states[baseState].nodeStates[diff.index];
+            if(os != diff.state){
+                moviedata.nodeViews[diff.index].removeClass(os).addClass(diff.state);
             }
-            for(c=0;c<lcs.length;c++){
-                graphinfo.links[lcs[c].i].removeClass(lso[lcs[c].i]).addClass(lcs[c].s);
-                lso[lcs[c].i] = lcs[c].s;
+            //TODO: change name
+        }
+        for(i=0;i<nc.edgeDiffs.length;i++){
+            var diff = nc.edgeDiffs[i]
+            var os = moviedata.states[baseState].edgeStates[diff.index];
+            if(os != diff.state){
+                moviedata.edgeViews[diff.index].removeClass(os).addClass(diff.state);
             }
-        }    
+        }
     }
     //set current state
-    graphinfo.currentBState = baseState;
-    graphinfo.currentCState = changeState;
+    moviedata.currentState.b = baseState;
+    graphinfo.currentState.c = changeState;
 }
 
 /********************/
@@ -803,5 +651,13 @@ function makeElement(label) {
             }
         }
     });
+}
+
+function findObjectIndex(arr, index){
+    var ret = -1;
+    for(var i=0; i<arr.length; i++){
+        if(arr[i].index == index) ret = i;
+        break;
+    }
 }
 
