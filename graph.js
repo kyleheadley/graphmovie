@@ -184,7 +184,7 @@ var loader = {
     addChange: function(name, info){
         //init
         if(loader.currentState == -1) loader.addState("None","");
-        var cs = movie.states[loader.currentState];
+        var cs = moviedata.states[loader.currentState];
         var cc = cs.changes[loader.currentChange];
         //finalize previous
         cs.changes[loader.currentChange].$op.val(STATUS_WAITING).text('Awaiting Layout ...');
@@ -270,7 +270,7 @@ var loader = {
         //update size
         os = moviedata.nodeSize[nodeIndex];
         ns = calcSize(name);
-        moviedata.nodeSize[nodeIndex] = {width: max(os.width, ns.width), height: max(os.height, ns.height)};
+        moviedata.nodeSize[nodeIndex] = {width: _.max(os.width, ns.width), height: _.max(os.height, ns.height)};
     },
     addEdge: function(from, to, tag, state, name, info){
         //init
@@ -317,6 +317,8 @@ var loader = {
                 moviedata.states[i].nodeStates[nodeIndex] = {state: STATE_NONE, name: '', info: ''};
             }
         }
+        //init size
+        moviedata.nodeSize[nodeIndex] = calcSize("min");
         //stage
         moviedata.nodeViews[nodeIndex] = makeElement(id);
         mainGraph.addCell(moviedata.nodeViews[nodeIndex]);
@@ -337,11 +339,11 @@ var loader = {
         if(edgeIndex == -1){
             //set up edge
             edgeIndex = moviedata.edgeIds.length;
-            moviedata.edges.push(id);
+            moviedata.edgeIds.push(id);
             //retroactive add
             loader.currentEdgeStates[edgeIndex] = STATE_NONE;
-            for(var i = 0; i < movie.states.length; i++){
-                movie.states[i].edgeStates[edgeIndex] = {state: STATE_NONE, name: '', info: ''};
+            for(var i = 0; i < moviedata.states.length; i++){
+                moviedata.states[i].edgeStates[edgeIndex] = {state: STATE_NONE, name: '', info: ''};
             }
         }
         //stage
@@ -492,7 +494,7 @@ function refreshGraph(baseState, changeState){
             }
             //TODO: change name
         }
-        for(var i=0; i<moviedata.edges.length; i++){
+        for(var i=0; i<moviedata.edgeIds.length; i++){
             var os = moviedata.states[moviedata.currentState.b].edgeStates[i];
             var ns = moviedata.states[changeState].edgeStates[i];
             if(moviedata.mode == 'diff') ns = STATE_NONE;
@@ -573,7 +575,9 @@ function handleListSelect(event){
 }
 
 function handleModeChange(event) {
-    var ss = $('#list option:selected').val().split('c');
+    var opt = $('#list option:selected').val();
+    if(!opt) return;
+    var ss = opt.split('c');
     var bs = parseInt(ss[0]);
     var cs = parseInt(ss[1]);
 
