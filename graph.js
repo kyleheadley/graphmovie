@@ -189,10 +189,10 @@ var loader = {
         //finalize previous
         cs.changes[loader.currentChange].$op.val(STATUS_WAITING).text('Awaiting Layout ...');
         for(var i = 0; i<cc.nodeDiffs.length; i++){
-            currentNodeStates[cc.nodeDiffs[i].index] = cc.nodeDiffs[i].state;
+            loader.currentNodeStates[cc.nodeDiffs[i].index] = cc.nodeDiffs[i].state;
         }
         for(var i = 0; i<cc.edgeDiffs.length; i++){
-            currentEdgeStates[cc.edgeDiffs[i].index] = cc.edgeDiffs[i].state;
+            loader.currentEdgeStates[cc.edgeDiffs[i].index] = cc.edgeDiffs[i].state;
         }
         //new
         var newChange = {
@@ -204,7 +204,7 @@ var loader = {
         };
         //increment
         loader.currentChange = cs.changes.length;
-        for(var i=0; i<nodeDiffs.length; i++){
+        for(var i=0; i<cc.nodeDiffs.length; i++){
             var copiedDiff = {
                 index: cc.nodeDiffs[i].index,
                 state: cc.nodeDiffs[i].state,
@@ -214,7 +214,7 @@ var loader = {
             }
             newChange.nodeDiffs.push(copiedDiff)
         }
-        for(var i=0; i<edgeDiffs.length; i++){
+        for(var i=0; i<cc.edgeDiffs.length; i++){
             var copiedDiff = {
                 index: cc.edgeDiffs[i].index,
                 state: cc.edgeDiffs[i].state,
@@ -227,7 +227,7 @@ var loader = {
         //store
         cs.changes.push(newChange);
         //view
-        $('#list').append($op.val(STATUS_LOADING).text('Loading ...'));
+        $('#list').append(newChange.$op.val(STATUS_LOADING).text('Loading ...'));
 
     },
     finalize: function(){
@@ -316,17 +316,17 @@ var loader = {
             for(var i = 0; i < moviedata.states.length; i++){
                 moviedata.states[i].nodeStates[nodeIndex] = {state: STATE_NONE, name: '', info: ''};
             }
+            //init size
+            moviedata.nodeSize[nodeIndex] = calcSize("min");
+            //stage
+            moviedata.nodeViews[nodeIndex] = makeElement(id);
+            mainGraph.addCell(moviedata.nodeViews[nodeIndex]);
         }
-        //init size
-        moviedata.nodeSize[nodeIndex] = calcSize("min");
-        //stage
-        moviedata.nodeViews[nodeIndex] = makeElement(id);
-        mainGraph.addCell(moviedata.nodeViews[nodeIndex]);
 
         return nodeIndex;
     },
     registerEdge: function(from, to, tag){
-        var id = [to, from, tag].join(' ');
+        var id = [from, to, tag].join(' ');
         //set up connected nodes
         if(moviedata.nodeIds.indexOf(from) == -1){        
             loader.addNode(from, STATE_UNKNOWN, from, '')
@@ -345,10 +345,10 @@ var loader = {
             for(var i = 0; i < moviedata.states.length; i++){
                 moviedata.states[i].edgeStates[edgeIndex] = {state: STATE_NONE, name: '', info: ''};
             }
+            //stage
+            moviedata.edgeViews[edgeIndex] = makeLink(from, to);
+            mainGraph.addCell(moviedata.edgeViews[edgeIndex]);
         }
-        //stage
-        moviedata.edgeViews[edgeIndex] = makeLink(to, from);
-        mainGraph.addCell(moviedata.edgeViews[edgeIndex]);
 
         return edgeIndex;
     },
