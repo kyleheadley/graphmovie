@@ -1,0 +1,26 @@
+[state] First
+[edge 1 2 active]
+[]btw, anything that has an empty tag is a comment
+The text under anything is info attached to that tag
+even when it goes multiple lines
+[]any state can be defined in the css for visuals
+[edge 2 3 1 active]
+[node 4 unknown]
+[change]a change
+[node 4 active]
+[change]another change
+[edge 2 3 1 nonactive]
+[change]double change
+[edge 3 4 active]
+[]its not a change but it does force the edge:
+[edge 3 5 nonactive]
+[node 4 missing]
+[change]do-nothing change
+[edge 2 3 1 active]
+[edge 2 3 1 nonactive]
+[change]one last change
+[node 7 added]
+[state]Second
+[edge 2 3 1 active]
+[edge 3 4 trouble]
+[node 5 missing]

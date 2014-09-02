@@ -80,12 +80,14 @@ var parser = {
             args = el.substr(1).split(' ');
             //extract the first element
             tag = args.shift();
+            title = line.slice(split+1);
         }else{
             //first line is without tag
             args = [];
             tag = '';
+            title = '';
+            currentLine = -1;
         }
-        title = line.slice(split+1);
         //find next line
         var nextLine = parser.currentLine+1;
         while(nextLine<parser.lines.length && parser.lines[nextLine][0]!='[') {
@@ -234,7 +236,7 @@ var loader = {
         if(loader.currentState >= 0){
             moviedata.states[loader.currentState].changes[loader.currentChange].$op.text('Awaiting Layout ...');
         }
-        _.delay(loader.layout(), 50);
+        _.delay(loader.layout, 50);
     },
     addNode: function(id, state, name, info){
         //init
@@ -270,7 +272,7 @@ var loader = {
         //update size
         os = moviedata.nodeSize[nodeIndex];
         ns = calcSize(name);
-        moviedata.nodeSize[nodeIndex] = {width: _.max(os.width, ns.width), height: _.max(os.height, ns.height)};
+        moviedata.nodeSize[nodeIndex] = {width: _.max([os.width, ns.width]), height: _.max([os.height, ns.height])};
     },
     addEdge: function(from, to, tag, state, name, info){
         //init
@@ -371,7 +373,7 @@ var loader = {
         }
         for(i=0;i<moviedata.edgeViews.length;i++){
             var model = moviedata.edgeViews[i];
-            moviedata.links[i] = V(mainDisplay.findViewByModel(model).el);
+            moviedata.edgeViews[i] = V(mainDisplay.findViewByModel(model).el);
         }
         //set paper size with extra space for repositioning
         moviedata.height = size.height + window.innerHeight;
@@ -409,14 +411,14 @@ function loadFile(file) {
     var reader = new FileReader();
     reader.onload = function(e) {
         //clear view
-        mainGraph.resetCells();
+        resetData();
         //prep parser
         parser.useString(e.target.result)
         //parse data
         parser.parseLines();
         //currently data displayed automatically at completion of parse
     }
-    reader.readAsText(file);
+    if(file) reader.readAsText(file);
 }
 
 /***********/
@@ -448,7 +450,7 @@ function refreshGraph(baseState, changeState){
             }
         //backwards
         }else if(moviedata.currentState.c-1 == changeState){
-            for(var cs=moviedata.currentState.c;cs>changestate;cs--){
+            for(var cs=moviedata.currentState.c;cs>changeState;cs--){
                 var ncs = moviedata.states[baseState].changes[cs].nodeDiffs
                 for(var n=0;n<ncs.length;n++){
                     if(ncs[n].state != ncs[n].lastState){
@@ -487,7 +489,7 @@ function refreshGraph(baseState, changeState){
         //change all the rest of the objects to the base state
         for(var i=0; i<moviedata.nodeIds.length; i++){
             var os = moviedata.states[moviedata.currentState.b].nodeStates[i];
-            var ns = moviedata.states[changeState].nodeStates[i];
+            var ns = moviedata.states[baseState].nodeStates[i];
             if(moviedata.mode == 'diff') ns = STATE_NONE;
             if(ns != os){
                 moviedata.nodeViews[i].removeClass(os).addClass(ns);
@@ -496,10 +498,10 @@ function refreshGraph(baseState, changeState){
         }
         for(var i=0; i<moviedata.edgeIds.length; i++){
             var os = moviedata.states[moviedata.currentState.b].edgeStates[i];
-            var ns = moviedata.states[changeState].edgeStates[i];
+            var ns = moviedata.states[baseState].edgeStates[i];
             if(moviedata.mode == 'diff') ns = STATE_NONE;
             if(ns != os){
-                moviedata.egdeViews[i].removeClass(os).addClass(ns);
+                moviedata.edgeViews[i].removeClass(os).addClass(ns);
             }
         }
         //add the new changes
@@ -582,8 +584,6 @@ function handleModeChange(event) {
     var cs = parseInt(ss[1]);
 
     moviedata.mode = event.target.value;
-    //force redraw
-    moviedata.currentState.b = -1;
     refreshGraph(bs,cs);
 }
 
@@ -614,6 +614,27 @@ function adjustPaper(){
         LEFT_CONTROL_BAR_WIDTH + w*z,
         TOP_CONTROL_BAR_HEIGHT+ h*z
     );
+}
+
+function resetData(){
+    //clear main data object
+    moviedata.firstUnLayedOutState = 0;
+    moviedata.nodeIds = [];
+    moviedata.nodeViews = [];
+    moviedata.nodeSize = [];
+    moviedata.edgeIds = [];
+    moviedata.edgeViews = [];
+    moviedata.states = [];
+    moviedata.currentState = {b:-1,c:-1};
+
+    //clear loader data
+    loader.currentState = -1;
+    loader.currentChange = -1;
+    loader.currentNodeStates = [];
+    loader.currentEdgeStates = [];
+
+    //clear graph object
+    mainGraph.resetCells();
 }
 
 function makeLink(parentElementLabel, childElementLabel) {
