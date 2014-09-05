@@ -263,7 +263,7 @@ var loader = {
                 name: name,
                 info: info
             }
-            if(oldIndex = -1){    
+            if(oldIndex == -1){    
                 cc.nodeDiffs.push(newNode);
             }else{
                 cc.nodeDiffs[oldIndex] = newNode;
@@ -299,7 +299,7 @@ var loader = {
                 name: name,
                 info: info
             }
-            if(oldIndex = -1){    
+            if(oldIndex == -1){    
                 cc.edgeDiffs.push(newEdge);
             }else{
                 cc.edgeDiffs[oldIndex] = newEdge;
@@ -430,11 +430,14 @@ function refreshGraph(baseState, changeState){
     if(baseState == moviedata.currentState.b &&
         changeState == moviedata.currentState.c) return;
 
+    var oldBase = moviedata.currentState.b;
+    var oldChange = moviedata.currentState.c;
+
     // +/-1 within the same base state (for speed)
-    if(moviedata.currentState.b == baseState){
+    if(oldBase == baseState && Math.abs(oldChange - changeState)<=1){
         //forward
-        if(moviedata.currentState.c+1 == changeState){
-            for(var cs=moviedata.currentState.c+1;cs<=changeState;cs++){
+        if(oldChange+1 == changeState){
+            for(var cs=oldChange+1;cs<=changeState;cs++){
                 var ncs = moviedata.states[baseState].changes[cs].nodeDiffs
                 for(var n=0;n<ncs.length;n++){
                     if(ncs[n].state != ncs[n].lastState){
@@ -449,8 +452,8 @@ function refreshGraph(baseState, changeState){
                 }
             }
         //backwards
-        }else if(moviedata.currentState.c-1 == changeState){
-            for(var cs=moviedata.currentState.c;cs>changeState;cs--){
+        }else if(oldChange-1 == changeState){
+            for(var cs=oldChange;cs>changeState;cs--){
                 var ncs = moviedata.states[baseState].changes[cs].nodeDiffs
                 for(var n=0;n<ncs.length;n++){
                     if(ncs[n].state != ncs[n].lastState){
@@ -467,11 +470,11 @@ function refreshGraph(baseState, changeState){
         }
     //arbitrary change of states
     }else{
-        //change the state of all changed objects to the base state
-        var cc = moviedata.states[moviedata.currentState.b].changes[moviedata.currentState.c];
+        //change the state of all changed objects to their base state
+        var cc = moviedata.states[oldBase].changes[oldChange];
         for(var i=0;i<cc.nodeDiffs.length;i++){
             var diff = cc.nodeDiffs[i]
-            var ns = moviedata.states[baseState].nodeStates[diff.index];
+            var ns = moviedata.states[oldBase].nodeStates[diff.index];
             if(moviedata.mode == 'diff') ns = STATE_NONE;
             if(ns != diff.state){
                 moviedata.nodeViews[diff.index].removeClass(diff.state).addClass(ns);
@@ -480,15 +483,15 @@ function refreshGraph(baseState, changeState){
         }
         for(var i=0;i<cc.edgeDiffs.length;i++){
             var diff = cc.edgeDiffs[i]
-            var ns = moviedata.states[baseState].edgeStates[diff.index];
+            var ns = moviedata.states[oldBase].edgeStates[diff.index];
             if(moviedata.mode == 'diff') ns = STATE_NONE;
             if(ns != diff.state){
                 moviedata.edgeViews[diff.index].removeClass(diff.state).addClass(ns);
             }
         }
-        //change all the rest of the objects to the base state
+        //change all the objects to the new base state
         for(var i=0; i<moviedata.nodeIds.length; i++){
-            var os = moviedata.states[moviedata.currentState.b].nodeStates[i];
+            var os = moviedata.states[oldBase].nodeStates[i];
             var ns = moviedata.states[baseState].nodeStates[i];
             if(moviedata.mode == 'diff') ns = STATE_NONE;
             if(ns != os){
@@ -497,7 +500,7 @@ function refreshGraph(baseState, changeState){
             //TODO: change name
         }
         for(var i=0; i<moviedata.edgeIds.length; i++){
-            var os = moviedata.states[moviedata.currentState.b].edgeStates[i];
+            var os = moviedata.states[oldBase].edgeStates[i];
             var ns = moviedata.states[baseState].edgeStates[i];
             if(moviedata.mode == 'diff') ns = STATE_NONE;
             if(ns != os){
@@ -686,5 +689,6 @@ function findObjectIndex(arr, index){
         if(arr[i].index == index) ret = i;
         break;
     }
+    return ret;
 }
 
