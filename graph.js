@@ -1,9 +1,11 @@
 //major
 //TODO: write style.add()
-//TODO: debug
+//TODO: add titles as names
 
 //minor
 //TODO: combine edge and node code where possible
+
+//future
 //TODO: bind the external layout with the internal layout
 
 /*************/
@@ -40,10 +42,10 @@ var moviedata = {
     currentState: {b:-1,c:-1}
 }
 
-//create views
-var stage = $('<div id="stagingDisplay></div>')
+//create views - currently only a single view
+//var stage = $('<div id="stagingDisplay></div>')
 var mainGraph = new joint.dia.Graph;
-var stagingGraph = new joint.dia.Graph;
+//var stagingGraph = new joint.dia.Graph;
 var mainDisplay = new joint.dia.Paper({
     el: $('#mainDisplay'),
     width: 200,
@@ -51,6 +53,7 @@ var mainDisplay = new joint.dia.Paper({
     gridSize: 1,
     model: mainGraph
 });
+/*
 var stagingDisplay = new joint.dia.Paper({
     el: stage,
     width: 200,
@@ -58,6 +61,7 @@ var stagingDisplay = new joint.dia.Paper({
     gridSize: 1,
     model: stagingGraph
 });
+*/
 
 //move the paper out from under the controls
 V(mainDisplay.viewport).translate(LEFT_CONTROL_BAR_WIDTH + 2, TOP_CONTROL_BAR_HEIGHT + 2)
@@ -164,6 +168,7 @@ var loader = {
             edgeDiffs: [],
             $op: $('<option></option>')
         };
+        //Initialize all known states to 'none'
         loader.currentNodeStates = [];
         for(var i = 0; i<moviedata.nodeIds.length; i++){
             loader.currentNodeStates[i] = STATE_NONE;
@@ -187,14 +192,14 @@ var loader = {
         //init
         if(loader.currentState == -1) loader.addState("None","");
         var cs = moviedata.states[loader.currentState];
-        var cc = cs.changes[loader.currentChange];
+        var oldChange = cs.changes[loader.currentChange];
         //finalize previous
-        cs.changes[loader.currentChange].$op.val(STATUS_WAITING).text('Awaiting Layout ...');
-        for(var i = 0; i<cc.nodeDiffs.length; i++){
-            loader.currentNodeStates[cc.nodeDiffs[i].index] = cc.nodeDiffs[i].state;
+        oldChange.$op.val(STATUS_WAITING).text('Awaiting Layout ...');
+        for(var i = 0; i<oldChange.nodeDiffs.length; i++){
+            loader.currentNodeStates[oldChange.nodeDiffs[i].index] = oldChange.nodeDiffs[i].state;
         }
-        for(var i = 0; i<cc.edgeDiffs.length; i++){
-            loader.currentEdgeStates[cc.edgeDiffs[i].index] = cc.edgeDiffs[i].state;
+        for(var i = 0; i<oldChange.edgeDiffs.length; i++){
+            loader.currentEdgeStates[oldChange.edgeDiffs[i].index] = oldChange.edgeDiffs[i].state;
         }
         //new
         var newChange = {
@@ -204,29 +209,29 @@ var loader = {
             edgeDiffs: [],
             $op: $('<option></option>')
         };
-        //increment
-        loader.currentChange = cs.changes.length;
-        for(var i=0; i<cc.nodeDiffs.length; i++){
+        //each changeset remembers the old changes in this state
+        for(var i=0; i<oldChange.nodeDiffs.length; i++){
             var copiedDiff = {
-                index: cc.nodeDiffs[i].index,
-                state: cc.nodeDiffs[i].state,
-                lastState: cc.nodeDiffs[i].state,
-                name: cc.nodeDiffs[i].name,
-                info: cc.nodeDiffs[i].info                
+                index: oldChange.nodeDiffs[i].index,
+                state: oldChange.nodeDiffs[i].state,
+                lastState: oldChange.nodeDiffs[i].state,
+                name: oldChange.nodeDiffs[i].name,
+                info: oldChange.nodeDiffs[i].info                
             }
             newChange.nodeDiffs.push(copiedDiff)
         }
-        for(var i=0; i<cc.edgeDiffs.length; i++){
+        for(var i=0; i<oldChange.edgeDiffs.length; i++){
             var copiedDiff = {
-                index: cc.edgeDiffs[i].index,
-                state: cc.edgeDiffs[i].state,
-                lastState: cc.edgeDiffs[i].state,
-                name: cc.edgeDiffs[i].name,
-                info: cc.edgeDiffs[i].info                
+                index: oldChange.edgeDiffs[i].index,
+                state: oldChange.edgeDiffs[i].state,
+                lastState: oldChange.edgeDiffs[i].state,
+                name: oldChange.edgeDiffs[i].name,
+                info: oldChange.edgeDiffs[i].info                
             }
             newChange.edgeDiffs.push(copiedDiff)
         }
         //store
+        loader.currentChange = cs.changes.length;
         cs.changes.push(newChange);
         //view
         $('#list').append(newChange.$op.val(STATUS_LOADING).text('Loading ...'));
@@ -381,10 +386,12 @@ var loader = {
         adjustPaper();
         //setup first states
         for(var i=0;i<moviedata.nodeViews.length;i++){
-            moviedata.nodeViews[i].addClass(moviedata.states[0].nodeStates[i]);
+            moviedata.nodeViews[i].addClass(moviedata.states[0].nodeStates[i].state);
+            //add names
+            //moviedata.nodeViews[i].findOne("text").text(moviedata.states[0].nodeStates[i].name);
         }
         for(var i=0;i<moviedata.edgeViews.length;i++){
-            moviedata.edgeViews[i].addClass(moviedata.states[0].edgeStates[i]);
+            moviedata.edgeViews[i].addClass(moviedata.states[0].edgeStates[i].state);
         }
         //setup '#list'
         for(var i=0; i<moviedata.states.length; i++){
@@ -433,39 +440,21 @@ function refreshGraph(baseState, changeState){
     var oldBase = moviedata.currentState.b;
     var oldChange = moviedata.currentState.c;
 
-    // +/-1 within the same base state (for speed)
-    if(oldBase == baseState && Math.abs(oldChange - changeState)<=1){
-        //forward
-        if(oldChange+1 == changeState){
-            for(var cs=oldChange+1;cs<=changeState;cs++){
-                var ncs = moviedata.states[baseState].changes[cs].nodeDiffs
-                for(var n=0;n<ncs.length;n++){
-                    if(ncs[n].state != ncs[n].lastState){
-                        moviedata.nodeViews[ncs[n].index].removeClass(ncs[n].lastState).addClass(ncs[n].state);
-                    }
+    // +1 within the same base state (for speed)
+    if(oldBase == baseState && oldChange+1 == changeState && moviedata.mode != 'diff'){
+        for(var cs=oldChange+1;cs<=changeState;cs++){
+            var ncs = moviedata.states[baseState].changes[cs].nodeDiffs
+            for(var n=0;n<ncs.length;n++){
+                if(ncs[n].state != ncs[n].lastState){
+                    moviedata.nodeViews[ncs[n].index].removeClass(ncs[n].lastState).addClass(ncs[n].state);
                 }
-                var ecs = moviedata.states[baseState].changes[cs].edgeDiffs
-                for(var e=0;e<ecs.length;e++){
-                    if(ecs[e].state != ecs[e].lastState){
-                        moviedata.nodeViews[ecs[e].index].removeClass(ecs[e].lastState).addClass(ecs[e].state);
-                    }
-                }
+                //moviedata.nodeViews[ncs[n].index].findOne("text").text(ncs[n].name);
             }
-        //backwards
-        }else if(oldChange-1 == changeState){
-            for(var cs=oldChange;cs>changeState;cs--){
-                var ncs = moviedata.states[baseState].changes[cs].nodeDiffs
-                for(var n=0;n<ncs.length;n++){
-                    if(ncs[n].state != ncs[n].lastState){
-                        moviedata.nodeViews[ncs[n].index].removeClass(ncs[n].state).addClass(ncs[n].lastState);
-                    }
+            var ecs = moviedata.states[baseState].changes[cs].edgeDiffs
+            for(var e=0;e<ecs.length;e++){
+                if(ecs[e].state != ecs[e].lastState){
+                    moviedata.edgeViews[ecs[e].index].removeClass(ecs[e].lastState).addClass(ecs[e].state);
                 }
-                var ecs = moviedata.states[baseState].changes[cs].edgeDiffs
-                for(var e=0;e<ecs.length;e++){
-                    if(ecs[e].state != ecs[e].lastState){
-                        moviedata.nodeViews[ecs[e].index].removeClass(ecs[e].state).addClass(ecs[e].lastState);
-                    }
-                }                
             }
         }
     //arbitrary change of states
@@ -474,7 +463,7 @@ function refreshGraph(baseState, changeState){
         var cc = moviedata.states[oldBase].changes[oldChange];
         for(var i=0;i<cc.nodeDiffs.length;i++){
             var diff = cc.nodeDiffs[i]
-            var ns = moviedata.states[oldBase].nodeStates[diff.index];
+            var ns = moviedata.states[oldBase].nodeStates[diff.index].state;
             if(moviedata.mode == 'diff') ns = STATE_NONE;
             if(ns != diff.state){
                 moviedata.nodeViews[diff.index].removeClass(diff.state).addClass(ns);
@@ -483,7 +472,7 @@ function refreshGraph(baseState, changeState){
         }
         for(var i=0;i<cc.edgeDiffs.length;i++){
             var diff = cc.edgeDiffs[i]
-            var ns = moviedata.states[oldBase].edgeStates[diff.index];
+            var ns = moviedata.states[oldBase].edgeStates[diff.index].state;
             if(moviedata.mode == 'diff') ns = STATE_NONE;
             if(ns != diff.state){
                 moviedata.edgeViews[diff.index].removeClass(diff.state).addClass(ns);
@@ -491,8 +480,8 @@ function refreshGraph(baseState, changeState){
         }
         //change all the objects to the new base state
         for(var i=0; i<moviedata.nodeIds.length; i++){
-            var os = moviedata.states[oldBase].nodeStates[i];
-            var ns = moviedata.states[baseState].nodeStates[i];
+            var os = moviedata.states[oldBase].nodeStates[i].state;
+            var ns = moviedata.states[baseState].nodeStates[i].state;
             if(moviedata.mode == 'diff') ns = STATE_NONE;
             if(ns != os){
                 moviedata.nodeViews[i].removeClass(os).addClass(ns);
@@ -500,8 +489,8 @@ function refreshGraph(baseState, changeState){
             //TODO: change name
         }
         for(var i=0; i<moviedata.edgeIds.length; i++){
-            var os = moviedata.states[oldBase].edgeStates[i];
-            var ns = moviedata.states[baseState].edgeStates[i];
+            var os = moviedata.states[oldBase].edgeStates[i].state;
+            var ns = moviedata.states[baseState].edgeStates[i].state;
             if(moviedata.mode == 'diff') ns = STATE_NONE;
             if(ns != os){
                 moviedata.edgeViews[i].removeClass(os).addClass(ns);
@@ -511,7 +500,7 @@ function refreshGraph(baseState, changeState){
         var nc = moviedata.states[baseState].changes[changeState];
         for(i=0;i<nc.nodeDiffs.length;i++){
             var diff = nc.nodeDiffs[i]
-            var os = moviedata.states[baseState].nodeStates[diff.index];
+            var os = moviedata.states[baseState].nodeStates[diff.index].state;
             if(os != diff.state){
                 moviedata.nodeViews[diff.index].removeClass(os).addClass(diff.state);
             }
@@ -519,7 +508,7 @@ function refreshGraph(baseState, changeState){
         }
         for(i=0;i<nc.edgeDiffs.length;i++){
             var diff = nc.edgeDiffs[i]
-            var os = moviedata.states[baseState].edgeStates[diff.index];
+            var os = moviedata.states[baseState].edgeStates[diff.index].state;
             if(os != diff.state){
                 moviedata.edgeViews[diff.index].removeClass(os).addClass(diff.state);
             }
@@ -588,6 +577,8 @@ function handleModeChange(event) {
 
     moviedata.mode = event.target.value;
     refreshGraph(bs,cs);
+    //allow user to use arrow keys without clicking
+    $('#list').focus();
 }
 
 function handleZoomText(event){
@@ -655,8 +646,8 @@ function calcSize(label) {
     // Compute width/height of the rectangle based on the number
     // of lines in the label and the letter size. 0.6 * letterSize is
     // an approximation of the monospace font letter width.
-    var width = 2 * (NODE_TEXT_SIZE * (0.6 * maxLineLength + 1));
-    var height = 2 * ((lines.length + 1) * NODE_TEXT_SIZE);
+    var width = (NODE_TEXT_SIZE * (0.6 * maxLineLength + 1));
+    var height = 3 * NODE_TEXT_SIZE;
     return {width: width, height: height};
 
 }
@@ -686,8 +677,10 @@ function makeElement(label) {
 function findObjectIndex(arr, index){
     var ret = -1;
     for(var i=0; i<arr.length; i++){
-        if(arr[i].index == index) ret = i;
-        break;
+        if(arr[i].index == index) {
+            ret = i;
+            break;
+        } 
     }
     return ret;
 }
