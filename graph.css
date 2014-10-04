@@ -60,7 +60,20 @@
   top: 50px;
   left: 0px;
   width: 250px;
+  bottom: 95px;
+}
+
+#infobox {
+  font-family: monospace;
+  font-size: 8px;
+  position: fixed;
+  border-width: 2px;
+  border-color: green;
   bottom: 15px;
+  left: 0px;
+  width: 250px;
+  height: 80px;
+  overflow: auto;
 }
 
 #controls {

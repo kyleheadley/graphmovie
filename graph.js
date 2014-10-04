@@ -39,7 +39,8 @@ var moviedata = {
     edgeIds: [],
     edgeViews: [],
     states: [],
-    currentState: {b:-1,c:-1}
+    currentState: {b:-1,c:-1},
+    info: ""
 }
 
 //create views - currently only a single view
@@ -171,12 +172,12 @@ var loader = {
         //Initialize all known states to 'none'
         loader.currentNodeStates = [];
         for(var i = 0; i<moviedata.nodeIds.length; i++){
-            loader.currentNodeStates[i] = STATE_NONE;
+            loader.currentNodeStates[i] = {state: STATE_NONE, name: '', info: ''};
             newState.nodeStates[i] = {state: STATE_NONE, name: '', info: ''};
         }
         loader.currentEdgeStates = [];
         for(var i = 0; i<moviedata.edgeIds.length; i++){
-            loader.currentEdgeStates[i] = STATE_NONE;
+            loader.currentEdgeStates[i] = {state: STATE_NONE, name: '', info: ''};
             newState.edgeStates[i] = {state: STATE_NONE, name: '', info: ''};
         }
         //increment
@@ -196,10 +197,10 @@ var loader = {
         //finalize previous
         oldChange.$op.val(STATUS_WAITING).text('Awaiting Layout ...');
         for(var i = 0; i<oldChange.nodeDiffs.length; i++){
-            loader.currentNodeStates[oldChange.nodeDiffs[i].index] = oldChange.nodeDiffs[i].state;
+            loader.currentNodeStates[oldChange.nodeDiffs[i].index] = oldChange.nodeDiffs[i];
         }
         for(var i = 0; i<oldChange.edgeDiffs.length; i++){
-            loader.currentEdgeStates[oldChange.edgeDiffs[i].index] = oldChange.edgeDiffs[i].state;
+            loader.currentEdgeStates[oldChange.edgeDiffs[i].index] = oldChange.edgeDiffs[i];
         }
         //new
         var newChange = {
@@ -214,7 +215,7 @@ var loader = {
             var copiedDiff = {
                 index: oldChange.nodeDiffs[i].index,
                 state: oldChange.nodeDiffs[i].state,
-                lastState: oldChange.nodeDiffs[i].state,
+                lastState: oldChange.nodeDiffs[i],
                 name: oldChange.nodeDiffs[i].name,
                 info: oldChange.nodeDiffs[i].info                
             }
@@ -224,7 +225,7 @@ var loader = {
             var copiedDiff = {
                 index: oldChange.edgeDiffs[i].index,
                 state: oldChange.edgeDiffs[i].state,
-                lastState: oldChange.edgeDiffs[i].state,
+                lastState: oldChange.edgeDiffs[i],
                 name: oldChange.edgeDiffs[i].name,
                 info: oldChange.edgeDiffs[i].info                
             }
@@ -257,7 +258,7 @@ var loader = {
                 name: name,
                 info: info
             };
-            loader.currentNodeStates[nodeIndex] = state;
+            loader.currentNodeStates[nodeIndex] = cs.nodeStates[nodeIndex];
         //change type
         }else{
             oldIndex = findObjectIndex(cc.nodeDiffs, nodeIndex);
@@ -293,7 +294,7 @@ var loader = {
                 name: name,
                 info: info
             };
-            loader.currentEdgeStates[edgeIndex] = state;
+            loader.currentEdgeStates[edgeIndex] = cs.edgeStates[edgeIndex];
         //change type
         }else{
             oldIndex = findObjectIndex(cc.edgeDiffs, edgeIndex);
@@ -319,7 +320,7 @@ var loader = {
             nodeIndex = moviedata.nodeIds.length;
             moviedata.nodeIds.push(id);
             //retroactive add
-            loader.currentNodeStates[nodeIndex] = STATE_NONE;
+            loader.currentNodeStates[nodeIndex] = {state: STATE_NONE, name: '', info: ''};
             for(var i = 0; i < moviedata.states.length; i++){
                 moviedata.states[i].nodeStates[nodeIndex] = {state: STATE_NONE, name: '', info: ''};
             }
@@ -348,7 +349,7 @@ var loader = {
             edgeIndex = moviedata.edgeIds.length;
             moviedata.edgeIds.push(id);
             //retroactive add
-            loader.currentEdgeStates[edgeIndex] = STATE_NONE;
+            loader.currentEdgeStates[edgeIndex] = {state: STATE_NONE, name: '', info: ''};
             for(var i = 0; i < moviedata.states.length; i++){
                 moviedata.states[i].edgeStates[edgeIndex] = {state: STATE_NONE, name: '', info: ''};
             }
@@ -385,14 +386,18 @@ var loader = {
         moviedata.width = size.width + window.innerWidth;
         adjustPaper();
         //setup first states
+        moviedata.info = titleInfoText(moviedata.states[0].changes[0]);
         for(var i=0;i<moviedata.nodeViews.length;i++){
             moviedata.nodeViews[i].addClass(moviedata.states[0].nodeStates[i].state);
+            moviedata.info += nodeInfoText(moviedata.states[0].nodeStates[i],i)
             //add names
             //moviedata.nodeViews[i].findOne("text").text(moviedata.states[0].nodeStates[i].name);
         }
         for(var i=0;i<moviedata.edgeViews.length;i++){
             moviedata.edgeViews[i].addClass(moviedata.states[0].edgeStates[i].state);
+            moviedata.info += edgeInfoText(moviedata.states[0].edgeStates[i],i)
         }
+        $('#infobox').html(moviedata.info);
         //setup '#list'
         for(var i=0; i<moviedata.states.length; i++){
             for(var j=0; j<moviedata.states[i].changes.length; j++){
@@ -439,21 +444,32 @@ function refreshGraph(baseState, changeState){
 
     var oldBase = moviedata.currentState.b;
     var oldChange = moviedata.currentState.c;
+    
+    moviedata.info = titleInfoText(moviedata.states[baseState].changes[changeState]);
 
     // +1 within the same base state (for speed)
     if(oldBase == baseState && oldChange+1 == changeState && moviedata.mode != 'diff'){
         for(var cs=oldChange+1;cs<=changeState;cs++){
             var ncs = moviedata.states[baseState].changes[cs].nodeDiffs
             for(var n=0;n<ncs.length;n++){
-                if(ncs[n].state != ncs[n].lastState){
-                    moviedata.nodeViews[ncs[n].index].removeClass(ncs[n].lastState).addClass(ncs[n].state);
+                //set states
+                if(ncs[n].state != ncs[n].lastState.state){
+                    moviedata.nodeViews[ncs[n].index].removeClass(ncs[n].lastState.state).addClass(ncs[n].state);
+                    //set info on state change
+                    moviedata.info += nodeInfoText(ncs[n]);
+                }else if(ncs[n].info != ncs[n].lastState.info || ncs[n].name != ncs[n].lastState.name) {
+                    //set info on info change
+                    moviedata.info += nodeInfoText(ncs[n]);
                 }
                 //moviedata.nodeViews[ncs[n].index].findOne("text").text(ncs[n].name);
             }
             var ecs = moviedata.states[baseState].changes[cs].edgeDiffs
             for(var e=0;e<ecs.length;e++){
-                if(ecs[e].state != ecs[e].lastState){
-                    moviedata.edgeViews[ecs[e].index].removeClass(ecs[e].lastState).addClass(ecs[e].state);
+                if(ecs[e].state != ecs[e].lastState.state){
+                    moviedata.edgeViews[ecs[e].index].removeClass(ecs[e].lastState.state).addClass(ecs[e].state);
+                    moviedata.info += edgeInfoText(ecs[e]);
+                }else if(ecs[e].info != ecs[e].lastState.info || ecs[e].name != ecs[e].lastState.name) {
+                    moviedata.info += edgeInfoText(ecs[e]);
                 }
             }
         }
@@ -496,13 +512,29 @@ function refreshGraph(baseState, changeState){
                 moviedata.edgeViews[i].removeClass(os).addClass(ns);
             }
         }
+        var bs = moviedata.states[baseState];
+        var nc = bs.changes[changeState];
         //add the new changes
-        var nc = moviedata.states[baseState].changes[changeState];
+        if(changeState == 0){
+            ns = bs.nodeStates;
+            es = bs.edgeStates;
+            //set info with all base items
+            for(i=0;i<ns.length;i++){
+                moviedata.info += nodeInfoText(ns[i], i);
+            }
+            for(i=0;i<es.length;i++){
+                moviedata.info += edgeInfoText(es[i], i);
+            }
+        }
         for(i=0;i<nc.nodeDiffs.length;i++){
             var diff = nc.nodeDiffs[i]
             var os = moviedata.states[baseState].nodeStates[diff.index].state;
             if(os != diff.state){
                 moviedata.nodeViews[diff.index].removeClass(os).addClass(diff.state);
+            }
+            if(diff.state != diff.lastState.state || diff.info != diff.lastState.info || diff.name != diff.lastState.name) {
+                //set info on info change from previous movie state
+                moviedata.info += nodeInfoText(diff);
             }
             //TODO: change name
         }
@@ -512,9 +544,14 @@ function refreshGraph(baseState, changeState){
             if(os != diff.state){
                 moviedata.edgeViews[diff.index].removeClass(os).addClass(diff.state);
             }
+            if(diff.state != diff.lastState.state || diff.info != diff.lastState.info || diff.name != diff.lastState.name) {
+                //set info on info change from previous movie state
+                moviedata.info += edgeInfoText(diff);
+            }
         }
     }
     //set current state
+    $('#infobox').html(moviedata.info);
     moviedata.currentState.b = baseState;
     moviedata.currentState.c = changeState;
 }
@@ -683,5 +720,41 @@ function findObjectIndex(arr, index){
         } 
     }
     return ret;
+}
+
+function nodeInfoText(item, index) {
+    //index is optional because some items don't have an index
+    if(typeof index === "undefined") index = item.index;
+    //get useful name
+    var name = item.name;
+    if(name == "") name = "node "+ moviedata.nodeIds[index];
+
+    var info = "<b>"+name+"</b>: "+item.state+"<br />";
+    //turn newlines into breaks
+    if(item.info != ""){
+        //turn newlines into breaks
+        info += item.info.replace(/(?:\r\n|\r|\n)/g, '<br />')+"<br />";
+    }
+    return info;
+}
+
+function edgeInfoText(item, index) {
+    //index is optional because some items don't have an index
+    if(typeof index === "undefined") index = item.index;
+    //get useful name
+    var name = item.name;
+    if(name == "") name = "edge "+ moviedata.edgeIds[index].replace(/ /g ,"-");
+
+    var info = "<b>"+name+"</b>: "+item.state+"<br />";
+    if(item.info != ""){
+        //turn newlines into breaks
+        info += item.info.replace(/(?:\r\n|\r|\n)/g, '<br />')+"<br />";
+    }
+    return info;
+}
+
+function titleInfoText(item) {
+    if(item.info == "") return "";
+    return "<i>"+item.info.replace(/(?:\r\n|\r|\n)/g, '<br />')+"</i><br />"
 }
 

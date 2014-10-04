@@ -1,0 +1,50 @@
+[state]make red
+ This is the first state
+ so it's kinda important
+[node 1 red]My name is red
+[change]-update 1
+ This change is important
+[edge 1 2]
+[node 2 red]me too
+ and I have all this
+ extra text under me!
+ isn't it great?
+[change]-update 2
+ This change is really important
+[edge 2 3]
+[node 3 red]
+[change]-start to fade
+ This <b>change</b> is more really important
+[node 1 orange]My name is red
+[edge 3 4]
+[node 4 red]red
+but I am!!
+[change]-no more updating
+[node 2 orange]me neither
+[change]-fading
+[node 3 orange]
+[change]-fade out
+[node 4 orange]
+[state]make blue
+[node 1 yellow]
+[node 2 yellow]
+[node 3 yellow]
+[node 4 yellow]
+[change]-one
+[node 1 blue]
+[change]-two
+[node 2 blue]
+[change]-three
+[node 3 blue]
+[change]-four
+[node 4 blue]
+[state]purple
+[node 1 purple]
+[node 2 purple]
+[node 3 purple]
+[node 4 purple]
+[state]green
+[node 1 green]
+[node 2 green]
+[node 3 green]
+[node 4 green]
