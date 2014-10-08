@@ -2,19 +2,26 @@
 <!DOCTYPE html>
 <html><body>
 <link rel="stylesheet" type="text/css" href="lib/joint.min.css" />
+<link rel="stylesheet" type="text/css" href="lib/layout-default.css" />
 <link rel="stylesheet" type="text/css" href="graph.css" />
 <link id="csschoice" rel="stylesheet" type="text/css" href="" />
 
-<input id="file" type="file" name="file" />
-<select id="style">
-	<option value="colors" selected>Simple colors</option>
-	<option value="adapton">Adapton</option>
-</select>
-<select id="list" size="2">
-	<option value="-1c-1">No file selected</option>
-</select>
-<div id="infobox"></div>
-<div id="controls">
+<div id="controls-left">
+  <div id="initcontrols">
+    <input id="file" type="file" name="file" />
+    <select id="style">
+    	<option value="colors" selected>Simple colors</option>
+    	<option value="adapton">Adapton</option>
+    </select>
+  </div>
+  <div id="listpane">
+    <select id="list" size="2">
+    	<option value="-1c-1">No file selected</option>
+    </select>
+  </div>
+  <div id="infobox"></div>
+</div>
+<div id="controls-top">
 	<select id="mode">
 		<option value="all" selected>View full state</option>
 		<option value="diff">Changes only</option>
@@ -26,6 +33,23 @@
 
 <script type="text/javascript" src="lib/joint.min.js"></script>
 <script type="text/javascript" src="lib/joint.layout.DirectedGraph.min.js"></script>
+<script type="text/javascript" src="lib/jquery.layout.js"></script>
 <script type="text/javascript" src="graph.js"></script>
+
+<script>
+  $(document).ready(function () {
+    $('#controls-left').layout({ 
+      north__paneSelector: "#initcontrols",
+      center__paneSelector: "#listpane",
+      south__paneSelector: "#infobox",
+      south__size: 200,
+      spacing_open: 5,
+      spacing_closed: 5,
+      minSize: 50
+    });
+  });
+</script>
+
+
 
 </body></html>

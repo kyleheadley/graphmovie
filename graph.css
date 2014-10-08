@@ -29,14 +29,6 @@
 
 /* document layout */
 
-#file {
-  position: fixed;
-  top: 5px;
-  left: 0px;
-  width: 250px;
-  height: 20px;
-}
-
 #mainDisplay {
   overflow: scroll;
   position: fixed;
@@ -47,40 +39,43 @@
   z-index: -1; /*keep it under everything else */
 }
 
-#style {
+#initcontrols {
+  padding: 0px;
+  overflow: hidden;
+}
+
+#listpane {
+  padding: 0px;
+}
+
+#controls-top {
+  padding: 0px;
   position: fixed;
-  top: 30px;
+  top: 0px;
+  height: 25px;
+  left: 250px;
+}
+
+#controls-left {
+  position: fixed;
+  top: 0px;
   left: 0px;
+  width: 250px;
+  bottom: 15px;
 }
 
 #list {
   font-family: monospace;
   font-size: 11px;
-  position: fixed;
-  top: 50px;
-  left: 0px;
-  width: 250px;
-  bottom: 95px;
+  width: 100%;
+  height: 100%;
 }
 
 #infobox {
+  padding: 2px;
   font-family: monospace;
   font-size: 8px;
-  position: fixed;
-  border-width: 2px;
-  border-color: green;
-  bottom: 15px;
-  left: 0px;
-  width: 250px;
-  height: 80px;
   overflow: auto;
-}
-
-#controls {
-  position: fixed;
-  top: 0px;
-  height: 25px;
-  left: 250px;
 }
 
 /* node shadow */
