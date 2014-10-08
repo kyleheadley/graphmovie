@@ -106,7 +106,7 @@ var parser = {
         parser.currentLine = nextLine;
         //repeat (or not)
         if(parser.currentLine<parser.lines.length){         
-            _.delay(parser.parseLines, 50)
+            _.delay(parser.parseLines, 1)
         }else{
             loader.finalize();
         }
@@ -133,7 +133,7 @@ var parser = {
                 if(args.length >= 4){
                     loader.addEdge(args[0], args[1], args[2], args[3], title, text);
                 }else if(args.length == 3){
-                     loader.addEdge(args[0], args[1], '', args[3], title, text);
+                     loader.addEdge(args[0], args[1], '', args[2], title, text);
                 }else if(args.length == 2){
                      loader.addEdge(args[0], args[1], '', STATE_UNKNOWN, title, text);
                 }
