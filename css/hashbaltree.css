@@ -1,0 +1,125 @@
+
+.seen rect {
+  stroke: blue;
+  fill: blue;
+}
+
+.path-ext rect {
+  stroke: purple;
+  fill: purple;
+}
+
+.create-bin rect {
+  stroke: red;
+  fill: red;
+}
+
+.create-bin rect {
+  stroke: red;
+  fill: red;
+}
+
+.create-bin .connection {
+  stroke: red;
+  stroke-width: 5px;
+}
+
+.height-1 .connection {
+  stroke: red;
+  stroke-width: 1px;
+}
+
+.height-2 .connection {
+  stroke: red;
+  stroke-width: 4px;
+}
+
+.height-3 .connection {
+  stroke: red;
+  stroke-width: 6px;
+}
+
+.height-4 .connection {
+  stroke: red;
+  stroke-width: 8px;
+}
+
+.height-5 .connection {
+  stroke: red;
+  stroke-width: 10px;
+}
+
+.height-6 .connection {
+  stroke: red;
+  stroke-width: 12px;
+}
+
+.height-7 .connection {
+  stroke: red;
+  stroke-width: 14px;
+}
+
+.height-8 .connection {
+  stroke: red;
+  stroke-width: 16px;
+}
+
+.leaf rect {
+  fill: green;
+  stroke: green;
+  stroke-width: 1px;
+}
+
+.height-1 rect {
+  fill: Chocolate;
+  stroke: Chocolate;
+  stroke-width: 1px;
+}
+
+.height-2 rect {
+  fill: SaddleBrown;
+  stroke: SaddleBrown;
+  stroke-width: 2px;
+}
+
+.height-3 rect {
+  fill: brown;
+  stroke: brown;
+  stroke-width: 3px;
+}
+
+.height-4 rect {
+  fill: brown;
+  stroke: brown;
+  stroke-width: 4px;
+}
+
+.height-5 rect {
+  fill: brown;
+  stroke: brown;
+  stroke-width: 5px;
+}
+
+.height-6 rect {
+  fill: brown;
+  stroke: brown;
+  stroke-width: 6px;
+}
+
+.height-7 rect {
+  fill: brown;
+  stroke: brown;
+  stroke-width: 7px;
+}
+
+.height-8 rect   {
+  fill: brown;
+  stroke: brown;
+  stroke-width: 8px;
+}
+
+
+svg#v-3 {
+ background-color:black;
+ padding:10px;
+}

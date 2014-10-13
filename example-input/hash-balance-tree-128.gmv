@@ -1,0 +1,1671 @@
+[change] Element 9344 at level 1
+[node 9344-h1 seen]
+[change] Element 6685 at level 1
+[node 6685-h1 seen]
+[change] Down to level 1
+[node Leaf2 path-ext]
+[change] Element 182 at level 1
+[node 182-h1 seen]
+[change] Down to level 1
+[node Leaf5 path-ext]
+[change] Element 1641 at level 3
+[node 1641-h3 seen]
+[change] Up to target level 3
+[node 182-h1 create-bin]
+[change] Up to root
+[node 182-h1 create-bin]
+[edge 182-h1 Leaf8 height-1]
+[edge 182-h1 Leaf11 height-1]
+[change] Up to target level 3
+[node 6685-h1 create-bin]
+[change] Up to root
+[node 6685-h1 create-bin]
+[edge 6685-h1 Leaf5 height-1]
+[edge 6685-h1 182-h1 height-1]
+[change] Up to target level 3
+[node 9344-h1 create-bin]
+[change] Up to root
+[node 9344-h1 create-bin]
+[edge 9344-h1 Leaf2 height-1]
+[edge 9344-h1 6685-h1 height-1]
+[change] Element 439 at level 2
+[node 439-h2 seen]
+[change] Down to level 2
+[node 9344-h1 path-ext]
+[change] Element 7500 at level 3
+[node 7500-h3 seen]
+[change] Up to target level 3
+[node 439-h2 create-bin]
+[change] Up to root
+[node 439-h2 create-bin]
+[edge 439-h2 Leaf14 height-2]
+[edge 439-h2 Leaf17 height-2]
+[change] Element 4104 at level 1
+[node 4104-h1 seen]
+[change] Down to level 1
+[node 439-h2 path-ext]
+[change] Element 7020 at level 4
+[node 7020-h4 seen]
+[change] Up to target level 4
+[node 4104-h1 create-bin]
+[change] Up to root
+[node 4104-h1 create-bin]
+[edge 4104-h1 Leaf20 height-1]
+[edge 4104-h1 Leaf23 height-1]
+[change] Up to target level 4
+[node 7500-h3 create-bin]
+[change] Up to root
+[node 7500-h3 create-bin]
+[edge 7500-h3 439-h2 height-3]
+[edge 7500-h3 4104-h1 height-3]
+[change] Up to target level 4
+[node 1641-h3 create-bin]
+[change] Up to root
+[node 1641-h3 create-bin]
+[edge 1641-h3 9344-h1 height-3]
+[edge 1641-h3 7500-h3 height-3]
+[change] Element 9921 at level 3
+[node 9921-h3 seen]
+[change] Down to level 3
+[node 1641-h3 path-ext]
+[change] Element 8370 at level 4
+[node 8370-h4 seen]
+[change] Up to target level 4
+[node 9921-h3 create-bin]
+[change] Up to root
+[node 9921-h3 create-bin]
+[edge 9921-h3 Leaf26 height-3]
+[edge 9921-h3 Leaf29 height-3]
+[change] Element 5217 at level 5
+[node 5217-h5 seen]
+[change] Up to target level 5
+[node 8370-h4 create-bin]
+[change] Up to root
+[node 8370-h4 create-bin]
+[edge 8370-h4 9921-h3 height-4]
+[edge 8370-h4 Leaf32 height-4]
+[change] Up to target level 5
+[node 7020-h4 create-bin]
+[change] Up to root
+[node 7020-h4 create-bin]
+[edge 7020-h4 1641-h3 height-4]
+[edge 7020-h4 8370-h4 height-4]
+[change] Element 6885 at level 2
+[node 6885-h2 seen]
+[change] Down to level 2
+[node 7020-h4 path-ext]
+[change] Element 5949 at level 3
+[node 5949-h3 seen]
+[change] Up to target level 3
+[node 6885-h2 create-bin]
+[change] Up to root
+[node 6885-h2 create-bin]
+[edge 6885-h2 Leaf35 height-2]
+[edge 6885-h2 Leaf38 height-2]
+[change] Element 8678 at level 1
+[node 8678-h1 seen]
+[change] Down to level 1
+[node 6885-h2 path-ext]
+[change] Element 3615 at level 2
+[node 3615-h2 seen]
+[change] Up to target level 2
+[node 8678-h1 create-bin]
+[change] Up to root
+[node 8678-h1 create-bin]
+[edge 8678-h1 Leaf41 height-1]
+[edge 8678-h1 Leaf44 height-1]
+[change] Element 4412 at level 1
+[node 4412-h1 seen]
+[change] Down to level 1
+[node 8678-h1 path-ext]
+[change] Element 2401 at level 2
+[node 2401-h2 seen]
+[change] Up to target level 2
+[node 4412-h1 create-bin]
+[change] Up to root
+[node 4412-h1 create-bin]
+[edge 4412-h1 Leaf47 height-1]
+[edge 4412-h1 Leaf50 height-1]
+[change] Element 8606 at level 5
+[node 8606-h5 seen]
+[change] Up to target level 5
+[node 2401-h2 create-bin]
+[change] Up to root
+[node 2401-h2 create-bin]
+[edge 2401-h2 4412-h1 height-2]
+[edge 2401-h2 Leaf53 height-2]
+[change] Up to target level 5
+[node 3615-h2 create-bin]
+[change] Up to root
+[node 3615-h2 create-bin]
+[edge 3615-h2 8678-h1 height-2]
+[edge 3615-h2 2401-h2 height-2]
+[change] Up to target level 5
+[node 5949-h3 create-bin]
+[change] Up to root
+[node 5949-h3 create-bin]
+[edge 5949-h3 6885-h2 height-3]
+[edge 5949-h3 3615-h2 height-3]
+[change] Element 3428 at level 2
+[node 3428-h2 seen]
+[change] Down to level 2
+[node 5949-h3 path-ext]
+[change] Element 2869 at level 1
+[node 2869-h1 seen]
+[change] Down to level 1
+[node Leaf56 path-ext]
+[change] Element 7289 at level 1
+[node 7289-h1 seen]
+[change] Down to level 1
+[node Leaf59 path-ext]
+[change] Element 6393 at level 2
+[node 6393-h2 seen]
+[change] Up to target level 2
+[node 7289-h1 create-bin]
+[change] Up to root
+[node 7289-h1 create-bin]
+[edge 7289-h1 Leaf62 height-1]
+[edge 7289-h1 Leaf65 height-1]
+[change] Up to target level 2
+[node 2869-h1 create-bin]
+[change] Up to root
+[node 2869-h1 create-bin]
+[edge 2869-h1 Leaf59 height-1]
+[edge 2869-h1 7289-h1 height-1]
+[change] Element 4014 at level 3
+[node 4014-h3 seen]
+[change] Up to target level 3
+[node 6393-h2 create-bin]
+[change] Up to root
+[node 6393-h2 create-bin]
+[edge 6393-h2 2869-h1 height-2]
+[edge 6393-h2 Leaf68 height-2]
+[change] Up to target level 3
+[node 3428-h2 create-bin]
+[change] Up to root
+[node 3428-h2 create-bin]
+[edge 3428-h2 Leaf56 height-2]
+[edge 3428-h2 6393-h2 height-2]
+[change] Element 3423 at level 4
+[node 3423-h4 seen]
+[change] Up to target level 4
+[node 4014-h3 create-bin]
+[change] Up to root
+[node 4014-h3 create-bin]
+[edge 4014-h3 3428-h2 height-3]
+[edge 4014-h3 Leaf71 height-3]
+[change] Element 3723 at level 4
+[node 3723-h4 seen]
+[change] Down to level 4
+[node 4014-h3 path-ext]
+[change] Element 6544 at level 1
+[node 6544-h1 seen]
+[change] Down to level 1
+[node Leaf74 path-ext]
+[change] Element 4096 at level 1
+[node 4096-h1 seen]
+[change] Down to level 1
+[node Leaf77 path-ext]
+[change] Element 4803 at level 4
+[node 4803-h4 seen]
+[change] Up to target level 4
+[node 4096-h1 create-bin]
+[change] Up to root
+[node 4096-h1 create-bin]
+[edge 4096-h1 Leaf80 height-1]
+[edge 4096-h1 Leaf83 height-1]
+[change] Up to target level 4
+[node 6544-h1 create-bin]
+[change] Up to root
+[node 6544-h1 create-bin]
+[edge 6544-h1 Leaf77 height-1]
+[edge 6544-h1 4096-h1 height-1]
+[change] Element 8500 at level 1
+[node 8500-h1 seen]
+[change] Down to level 1
+[node 6544-h1 path-ext]
+[change] Element 3570 at level 1
+[node 3570-h1 seen]
+[change] Down to level 1
+[node Leaf86 path-ext]
+[change] Element 9649 at level 2
+[node 9649-h2 seen]
+[change] Up to target level 2
+[node 3570-h1 create-bin]
+[change] Up to root
+[node 3570-h1 create-bin]
+[edge 3570-h1 Leaf89 height-1]
+[edge 3570-h1 Leaf92 height-1]
+[change] Up to target level 2
+[node 8500-h1 create-bin]
+[change] Up to root
+[node 8500-h1 create-bin]
+[edge 8500-h1 Leaf86 height-1]
+[edge 8500-h1 3570-h1 height-1]
+[change] Element 3212 at level 2
+[node 3212-h2 seen]
+[change] Down to level 2
+[node 8500-h1 path-ext]
+[change] Element 4755 at level 2
+[node 4755-h2 seen]
+[change] Down to level 2
+[node Leaf95 path-ext]
+[change] Element 6211 at level 1
+[node 6211-h1 seen]
+[change] Down to level 1
+[node Leaf98 path-ext]
+[change] Element 357 at level 2
+[node 357-h2 seen]
+[change] Up to target level 2
+[node 6211-h1 create-bin]
+[change] Up to root
+[node 6211-h1 create-bin]
+[edge 6211-h1 Leaf101 height-1]
+[edge 6211-h1 Leaf104 height-1]
+[change] Element 1197 at level 1
+[node 1197-h1 seen]
+[change] Down to level 1
+[node 6211-h1 path-ext]
+[change] Element 3897 at level 7
+[node 3897-h7 seen]
+[change] Up to target level 7
+[node 1197-h1 create-bin]
+[change] Up to root
+[node 1197-h1 create-bin]
+[edge 1197-h1 Leaf107 height-1]
+[edge 1197-h1 Leaf110 height-1]
+[change] Up to target level 7
+[node 357-h2 create-bin]
+[change] Up to root
+[node 357-h2 create-bin]
+[edge 357-h2 6211-h1 height-2]
+[edge 357-h2 1197-h1 height-2]
+[change] Up to target level 7
+[node 4755-h2 create-bin]
+[change] Up to root
+[node 4755-h2 create-bin]
+[edge 4755-h2 Leaf98 height-2]
+[edge 4755-h2 357-h2 height-2]
+[change] Up to target level 7
+[node 3212-h2 create-bin]
+[change] Up to root
+[node 3212-h2 create-bin]
+[edge 3212-h2 Leaf95 height-2]
+[edge 3212-h2 4755-h2 height-2]
+[change] Up to target level 7
+[node 9649-h2 create-bin]
+[change] Up to root
+[node 9649-h2 create-bin]
+[edge 9649-h2 8500-h1 height-2]
+[edge 9649-h2 3212-h2 height-2]
+[change] Up to target level 7
+[node 4803-h4 create-bin]
+[change] Up to root
+[node 4803-h4 create-bin]
+[edge 4803-h4 6544-h1 height-4]
+[edge 4803-h4 9649-h2 height-4]
+[change] Up to target level 7
+[node 3723-h4 create-bin]
+[change] Up to root
+[node 3723-h4 create-bin]
+[edge 3723-h4 Leaf74 height-4]
+[edge 3723-h4 4803-h4 height-4]
+[change] Up to target level 7
+[node 3423-h4 create-bin]
+[change] Up to root
+[node 3423-h4 create-bin]
+[edge 3423-h4 4014-h3 height-4]
+[edge 3423-h4 3723-h4 height-4]
+[change] Up to target level 7
+[node 8606-h5 create-bin]
+[change] Up to root
+[node 8606-h5 create-bin]
+[edge 8606-h5 5949-h3 height-5]
+[edge 8606-h5 3423-h4 height-5]
+[change] Up to target level 7
+[node 5217-h5 create-bin]
+[change] Up to root
+[node 5217-h5 create-bin]
+[edge 5217-h5 7020-h4 height-5]
+[edge 5217-h5 8606-h5 height-5]
+[change] Element 6460 at level 1
+[node 6460-h1 seen]
+[change] Down to level 1
+[node 5217-h5 path-ext]
+[change] Element 2183 at level 2
+[node 2183-h2 seen]
+[change] Up to target level 2
+[node 6460-h1 create-bin]
+[change] Up to root
+[node 6460-h1 create-bin]
+[edge 6460-h1 Leaf113 height-1]
+[edge 6460-h1 Leaf116 height-1]
+[change] Element 7763 at level 1
+[node 7763-h1 seen]
+[change] Down to level 1
+[node 6460-h1 path-ext]
+[change] Element 4720 at level 1
+[node 4720-h1 seen]
+[change] Down to level 1
+[node Leaf119 path-ext]
+[change] Element 3599 at level 1
+[node 3599-h1 seen]
+[change] Down to level 1
+[node Leaf122 path-ext]
+[change] Element 6559 at level 1
+[node 6559-h1 seen]
+[change] Down to level 1
+[node Leaf125 path-ext]
+[change] Element 9970 at level 3
+[node 9970-h3 seen]
+[change] Up to target level 3
+[node 6559-h1 create-bin]
+[change] Up to root
+[node 6559-h1 create-bin]
+[edge 6559-h1 Leaf128 height-1]
+[edge 6559-h1 Leaf131 height-1]
+[change] Up to target level 3
+[node 3599-h1 create-bin]
+[change] Up to root
+[node 3599-h1 create-bin]
+[edge 3599-h1 Leaf125 height-1]
+[edge 3599-h1 6559-h1 height-1]
+[change] Up to target level 3
+[node 4720-h1 create-bin]
+[change] Up to root
+[node 4720-h1 create-bin]
+[edge 4720-h1 Leaf122 height-1]
+[edge 4720-h1 3599-h1 height-1]
+[change] Up to target level 3
+[node 7763-h1 create-bin]
+[change] Up to root
+[node 7763-h1 create-bin]
+[edge 7763-h1 Leaf119 height-1]
+[edge 7763-h1 4720-h1 height-1]
+[change] Up to target level 3
+[node 2183-h2 create-bin]
+[change] Up to root
+[node 2183-h2 create-bin]
+[edge 2183-h2 6460-h1 height-2]
+[edge 2183-h2 7763-h1 height-2]
+[change] Element 6884 at level 2
+[node 6884-h2 seen]
+[change] Down to level 2
+[node 2183-h2 path-ext]
+[change] Element 9243 at level 1
+[node 9243-h1 seen]
+[change] Down to level 1
+[node Leaf134 path-ext]
+[change] Element 5220 at level 3
+[node 5220-h3 seen]
+[change] Up to target level 3
+[node 9243-h1 create-bin]
+[change] Up to root
+[node 9243-h1 create-bin]
+[edge 9243-h1 Leaf137 height-1]
+[edge 9243-h1 Leaf140 height-1]
+[change] Up to target level 3
+[node 6884-h2 create-bin]
+[change] Up to root
+[node 6884-h2 create-bin]
+[edge 6884-h2 Leaf134 height-2]
+[edge 6884-h2 9243-h1 height-2]
+[change] Element 5546 at level 2
+[node 5546-h2 seen]
+[change] Down to level 2
+[node 6884-h2 path-ext]
+[change] Element 8954 at level 4
+[node 8954-h4 seen]
+[change] Up to target level 4
+[node 5546-h2 create-bin]
+[change] Up to root
+[node 5546-h2 create-bin]
+[edge 5546-h2 Leaf143 height-2]
+[edge 5546-h2 Leaf146 height-2]
+[change] Up to target level 4
+[node 5220-h3 create-bin]
+[change] Up to root
+[node 5220-h3 create-bin]
+[edge 5220-h3 6884-h2 height-3]
+[edge 5220-h3 5546-h2 height-3]
+[change] Up to target level 4
+[node 9970-h3 create-bin]
+[change] Up to root
+[node 9970-h3 create-bin]
+[edge 9970-h3 2183-h2 height-3]
+[edge 9970-h3 5220-h3 height-3]
+[change] Element 5518 at level 2
+[node 5518-h2 seen]
+[change] Down to level 2
+[node 9970-h3 path-ext]
+[change] Element 8988 at level 1
+[node 8988-h1 seen]
+[change] Down to level 1
+[node Leaf149 path-ext]
+[change] Element 3358 at level 2
+[node 3358-h2 seen]
+[change] Up to target level 2
+[node 8988-h1 create-bin]
+[change] Up to root
+[node 8988-h1 create-bin]
+[edge 8988-h1 Leaf152 height-1]
+[edge 8988-h1 Leaf155 height-1]
+[change] Element 424 at level 1
+[node 424-h1 seen]
+[change] Down to level 1
+[node 8988-h1 path-ext]
+[change] Element 9051 at level 3
+[node 9051-h3 seen]
+[change] Up to target level 3
+[node 424-h1 create-bin]
+[change] Up to root
+[node 424-h1 create-bin]
+[edge 424-h1 Leaf158 height-1]
+[edge 424-h1 Leaf161 height-1]
+[change] Up to target level 3
+[node 3358-h2 create-bin]
+[change] Up to root
+[node 3358-h2 create-bin]
+[edge 3358-h2 8988-h1 height-2]
+[edge 3358-h2 424-h1 height-2]
+[change] Up to target level 3
+[node 5518-h2 create-bin]
+[change] Up to root
+[node 5518-h2 create-bin]
+[edge 5518-h2 Leaf149 height-2]
+[edge 5518-h2 3358-h2 height-2]
+[change] Element 2309 at level 1
+[node 2309-h1 seen]
+[change] Down to level 1
+[node 5518-h2 path-ext]
+[change] Element 3069 at level 2
+[node 3069-h2 seen]
+[change] Up to target level 2
+[node 2309-h1 create-bin]
+[change] Up to root
+[node 2309-h1 create-bin]
+[edge 2309-h1 Leaf164 height-1]
+[edge 2309-h1 Leaf167 height-1]
+[change] Element 1376 at level 5
+[node 1376-h5 seen]
+[change] Up to target level 5
+[node 3069-h2 create-bin]
+[change] Up to root
+[node 3069-h2 create-bin]
+[edge 3069-h2 2309-h1 height-2]
+[edge 3069-h2 Leaf170 height-2]
+[change] Up to target level 5
+[node 9051-h3 create-bin]
+[change] Up to root
+[node 9051-h3 create-bin]
+[edge 9051-h3 5518-h2 height-3]
+[edge 9051-h3 3069-h2 height-3]
+[change] Up to target level 5
+[node 8954-h4 create-bin]
+[change] Up to root
+[node 8954-h4 create-bin]
+[edge 8954-h4 9970-h3 height-4]
+[edge 8954-h4 9051-h3 height-4]
+[change] Element 4286 at level 1
+[node 4286-h1 seen]
+[change] Down to level 1
+[node 8954-h4 path-ext]
+[change] Element 6438 at level 1
+[node 6438-h1 seen]
+[change] Down to level 1
+[node Leaf173 path-ext]
+[change] Element 7122 at level 2
+[node 7122-h2 seen]
+[change] Up to target level 2
+[node 6438-h1 create-bin]
+[change] Up to root
+[node 6438-h1 create-bin]
+[edge 6438-h1 Leaf176 height-1]
+[edge 6438-h1 Leaf179 height-1]
+[change] Up to target level 2
+[node 4286-h1 create-bin]
+[change] Up to root
+[node 4286-h1 create-bin]
+[edge 4286-h1 Leaf173 height-1]
+[edge 4286-h1 6438-h1 height-1]
+[change] Element 9265 at level 1
+[node 9265-h1 seen]
+[change] Down to level 1
+[node 4286-h1 path-ext]
+[change] Element 1952 at level 2
+[node 1952-h2 seen]
+[change] Up to target level 2
+[node 9265-h1 create-bin]
+[change] Up to root
+[node 9265-h1 create-bin]
+[edge 9265-h1 Leaf182 height-1]
+[edge 9265-h1 Leaf185 height-1]
+[change] Element 8419 at level 8
+[node 8419-h8 seen]
+[change] Up to target level 8
+[node 1952-h2 create-bin]
+[change] Up to root
+[node 1952-h2 create-bin]
+[edge 1952-h2 9265-h1 height-2]
+[edge 1952-h2 Leaf188 height-2]
+[change] Up to target level 8
+[node 7122-h2 create-bin]
+[change] Up to root
+[node 7122-h2 create-bin]
+[edge 7122-h2 4286-h1 height-2]
+[edge 7122-h2 1952-h2 height-2]
+[change] Up to target level 8
+[node 1376-h5 create-bin]
+[change] Up to root
+[node 1376-h5 create-bin]
+[edge 1376-h5 8954-h4 height-5]
+[edge 1376-h5 7122-h2 height-5]
+[change] Up to target level 8
+[node 3897-h7 create-bin]
+[change] Up to root
+[node 3897-h7 create-bin]
+[edge 3897-h7 5217-h5 height-7]
+[edge 3897-h7 1376-h5 height-7]
+[change] Element 4683 at level 1
+[node 4683-h1 seen]
+[change] Down to level 1
+[node 3897-h7 path-ext]
+[change] Element 2782 at level 2
+[node 2782-h2 seen]
+[change] Up to target level 2
+[node 4683-h1 create-bin]
+[change] Up to root
+[node 4683-h1 create-bin]
+[edge 4683-h1 Leaf191 height-1]
+[edge 4683-h1 Leaf194 height-1]
+[change] Element 3740 at level 2
+[node 3740-h2 seen]
+[change] Down to level 2
+[node 4683-h1 path-ext]
+[change] Element 6270 at level 1
+[node 6270-h1 seen]
+[change] Down to level 1
+[node Leaf197 path-ext]
+[change] Element 9835 at level 2
+[node 9835-h2 seen]
+[change] Up to target level 2
+[node 6270-h1 create-bin]
+[change] Up to root
+[node 6270-h1 create-bin]
+[edge 6270-h1 Leaf200 height-1]
+[edge 6270-h1 Leaf203 height-1]
+[change] Element 5136 at level 4
+[node 5136-h4 seen]
+[change] Up to target level 4
+[node 9835-h2 create-bin]
+[change] Up to root
+[node 9835-h2 create-bin]
+[edge 9835-h2 6270-h1 height-2]
+[edge 9835-h2 Leaf206 height-2]
+[change] Up to target level 4
+[node 3740-h2 create-bin]
+[change] Up to root
+[node 3740-h2 create-bin]
+[edge 3740-h2 Leaf197 height-2]
+[edge 3740-h2 9835-h2 height-2]
+[change] Up to target level 4
+[node 2782-h2 create-bin]
+[change] Up to root
+[node 2782-h2 create-bin]
+[edge 2782-h2 4683-h1 height-2]
+[edge 2782-h2 3740-h2 height-2]
+[change] Element 5791 at level 1
+[node 5791-h1 seen]
+[change] Down to level 1
+[node 2782-h2 path-ext]
+[change] Element 2168 at level 2
+[node 2168-h2 seen]
+[change] Up to target level 2
+[node 5791-h1 create-bin]
+[change] Up to root
+[node 5791-h1 create-bin]
+[edge 5791-h1 Leaf209 height-1]
+[edge 5791-h1 Leaf212 height-1]
+[change] Element 5324 at level 3
+[node 5324-h3 seen]
+[change] Up to target level 3
+[node 2168-h2 create-bin]
+[change] Up to root
+[node 2168-h2 create-bin]
+[edge 2168-h2 5791-h1 height-2]
+[edge 2168-h2 Leaf215 height-2]
+[change] Element 2222 at level 1
+[node 2222-h1 seen]
+[change] Down to level 1
+[node 2168-h2 path-ext]
+[change] Element 8156 at level 2
+[node 8156-h2 seen]
+[change] Up to target level 2
+[node 2222-h1 create-bin]
+[change] Up to root
+[node 2222-h1 create-bin]
+[edge 2222-h1 Leaf218 height-1]
+[edge 2222-h1 Leaf221 height-1]
+[change] Element 2835 at level 1
+[node 2835-h1 seen]
+[change] Down to level 1
+[node 2222-h1 path-ext]
+[change] Element 2328 at level 1
+[node 2328-h1 seen]
+[change] Down to level 1
+[node Leaf224 path-ext]
+[change] Element 5636 at level 2
+[node 5636-h2 seen]
+[change] Up to target level 2
+[node 2328-h1 create-bin]
+[change] Up to root
+[node 2328-h1 create-bin]
+[edge 2328-h1 Leaf227 height-1]
+[edge 2328-h1 Leaf230 height-1]
+[change] Up to target level 2
+[node 2835-h1 create-bin]
+[change] Up to root
+[node 2835-h1 create-bin]
+[edge 2835-h1 Leaf224 height-1]
+[edge 2835-h1 2328-h1 height-1]
+[change] Element 9233 at level 1
+[node 9233-h1 seen]
+[change] Down to level 1
+[node 2835-h1 path-ext]
+[change] Element 7153 at level 3
+[node 7153-h3 seen]
+[change] Up to target level 3
+[node 9233-h1 create-bin]
+[change] Up to root
+[node 9233-h1 create-bin]
+[edge 9233-h1 Leaf233 height-1]
+[edge 9233-h1 Leaf236 height-1]
+[change] Up to target level 3
+[node 5636-h2 create-bin]
+[change] Up to root
+[node 5636-h2 create-bin]
+[edge 5636-h2 2835-h1 height-2]
+[edge 5636-h2 9233-h1 height-2]
+[change] Up to target level 3
+[node 8156-h2 create-bin]
+[change] Up to root
+[node 8156-h2 create-bin]
+[edge 8156-h2 2222-h1 height-2]
+[edge 8156-h2 5636-h2 height-2]
+[change] Element 2671 at level 1
+[node 2671-h1 seen]
+[change] Down to level 1
+[node 8156-h2 path-ext]
+[change] Element 2069 at level 2
+[node 2069-h2 seen]
+[change] Up to target level 2
+[node 2671-h1 create-bin]
+[change] Up to root
+[node 2671-h1 create-bin]
+[edge 2671-h1 Leaf239 height-1]
+[edge 2671-h1 Leaf242 height-1]
+[change] Element 3095 at level 1
+[node 3095-h1 seen]
+[change] Down to level 1
+[node 2671-h1 path-ext]
+[change] Element 6357 at level 3
+[node 6357-h3 seen]
+[change] Up to target level 3
+[node 3095-h1 create-bin]
+[change] Up to root
+[node 3095-h1 create-bin]
+[edge 3095-h1 Leaf245 height-1]
+[edge 3095-h1 Leaf248 height-1]
+[change] Up to target level 3
+[node 2069-h2 create-bin]
+[change] Up to root
+[node 2069-h2 create-bin]
+[edge 2069-h2 2671-h1 height-2]
+[edge 2069-h2 3095-h1 height-2]
+[change] Element 7092 at level 1
+[node 7092-h1 seen]
+[change] Down to level 1
+[node 2069-h2 path-ext]
+[change] Element 824 at level 2
+[node 824-h2 seen]
+[change] Up to target level 2
+[node 7092-h1 create-bin]
+[change] Up to root
+[node 7092-h1 create-bin]
+[edge 7092-h1 Leaf251 height-1]
+[edge 7092-h1 Leaf254 height-1]
+[change] Element 146 at level 1
+[node 146-h1 seen]
+[change] Down to level 1
+[node 7092-h1 path-ext]
+[change] Element 6278 at level 1
+[node 6278-h1 seen]
+[change] Down to level 1
+[node Leaf257 path-ext]
+[change] Element 6133 at level 2
+[node 6133-h2 seen]
+[change] Up to target level 2
+[node 6278-h1 create-bin]
+[change] Up to root
+[node 6278-h1 create-bin]
+[edge 6278-h1 Leaf260 height-1]
+[edge 6278-h1 Leaf263 height-1]
+[change] Up to target level 2
+[node 146-h1 create-bin]
+[change] Up to root
+[node 146-h1 create-bin]
+[edge 146-h1 Leaf257 height-1]
+[edge 146-h1 6278-h1 height-1]
+[change] Element 8688 at level 1
+[node 8688-h1 seen]
+[change] Down to level 1
+[node 146-h1 path-ext]
+[change] Element 4989 at level 2
+[node 4989-h2 seen]
+[change] Up to target level 2
+[node 8688-h1 create-bin]
+[change] Up to root
+[node 8688-h1 create-bin]
+[edge 8688-h1 Leaf266 height-1]
+[edge 8688-h1 Leaf269 height-1]
+[change] Element 8295 at level 1
+[node 8295-h1 seen]
+[change] Down to level 1
+[node 8688-h1 path-ext]
+[change] Element 3158 at level 1
+[node 3158-h1 seen]
+[change] Down to level 1
+[node Leaf272 path-ext]
+[change] Element 8393 at level 1
+[node 8393-h1 seen]
+[change] Down to level 1
+[node Leaf275 path-ext]
+[change] Element 601 at level 1
+[node 601-h1 seen]
+[change] Down to level 1
+[node Leaf278 path-ext]
+[change] Element 2456 at level 2
+[node 2456-h2 seen]
+[change] Up to target level 2
+[node 601-h1 create-bin]
+[change] Up to root
+[node 601-h1 create-bin]
+[edge 601-h1 Leaf281 height-1]
+[edge 601-h1 Leaf284 height-1]
+[change] Up to target level 2
+[node 8393-h1 create-bin]
+[change] Up to root
+[node 8393-h1 create-bin]
+[edge 8393-h1 Leaf278 height-1]
+[edge 8393-h1 601-h1 height-1]
+[change] Up to target level 2
+[node 3158-h1 create-bin]
+[change] Up to root
+[node 3158-h1 create-bin]
+[edge 3158-h1 Leaf275 height-1]
+[edge 3158-h1 8393-h1 height-1]
+[change] Up to target level 2
+[node 8295-h1 create-bin]
+[change] Up to root
+[node 8295-h1 create-bin]
+[edge 8295-h1 Leaf272 height-1]
+[edge 8295-h1 3158-h1 height-1]
+[change] Element 7513 at level 1
+[node 7513-h1 seen]
+[change] Down to level 1
+[node 8295-h1 path-ext]
+[change] Element 7329 at level 6
+[node 7329-h6 seen]
+[change] Up to target level 6
+[node 7513-h1 create-bin]
+[change] Up to root
+[node 7513-h1 create-bin]
+[edge 7513-h1 Leaf287 height-1]
+[edge 7513-h1 Leaf290 height-1]
+[change] Up to target level 6
+[node 2456-h2 create-bin]
+[change] Up to root
+[node 2456-h2 create-bin]
+[edge 2456-h2 8295-h1 height-2]
+[edge 2456-h2 7513-h1 height-2]
+[change] Up to target level 6
+[node 4989-h2 create-bin]
+[change] Up to root
+[node 4989-h2 create-bin]
+[edge 4989-h2 8688-h1 height-2]
+[edge 4989-h2 2456-h2 height-2]
+[change] Up to target level 6
+[node 6133-h2 create-bin]
+[change] Up to root
+[node 6133-h2 create-bin]
+[edge 6133-h2 146-h1 height-2]
+[edge 6133-h2 4989-h2 height-2]
+[change] Up to target level 6
+[node 824-h2 create-bin]
+[change] Up to root
+[node 824-h2 create-bin]
+[edge 824-h2 7092-h1 height-2]
+[edge 824-h2 6133-h2 height-2]
+[change] Up to target level 6
+[node 6357-h3 create-bin]
+[change] Up to root
+[node 6357-h3 create-bin]
+[edge 6357-h3 2069-h2 height-3]
+[edge 6357-h3 824-h2 height-3]
+[change] Up to target level 6
+[node 7153-h3 create-bin]
+[change] Up to root
+[node 7153-h3 create-bin]
+[edge 7153-h3 8156-h2 height-3]
+[edge 7153-h3 6357-h3 height-3]
+[change] Up to target level 6
+[node 5324-h3 create-bin]
+[change] Up to root
+[node 5324-h3 create-bin]
+[edge 5324-h3 2168-h2 height-3]
+[edge 5324-h3 7153-h3 height-3]
+[change] Up to target level 6
+[node 5136-h4 create-bin]
+[change] Up to root
+[node 5136-h4 create-bin]
+[edge 5136-h4 2782-h2 height-4]
+[edge 5136-h4 5324-h3 height-4]
+[change] Element 1013 at level 7
+[node 1013-h7 seen]
+[change] Up to target level 7
+[node 7329-h6 create-bin]
+[change] Up to root
+[node 7329-h6 create-bin]
+[edge 7329-h6 5136-h4 height-6]
+[edge 7329-h6 Leaf293 height-6]
+[change] Element 8000 at level 1
+[node 8000-h1 seen]
+[change] Down to level 1
+[node 7329-h6 path-ext]
+[change] Element 2017 at level 3
+[node 2017-h3 seen]
+[change] Up to target level 3
+[node 8000-h1 create-bin]
+[change] Up to root
+[node 8000-h1 create-bin]
+[edge 8000-h1 Leaf296 height-1]
+[edge 8000-h1 Leaf299 height-1]
+[change] Element 3186 at level 1
+[node 3186-h1 seen]
+[change] Down to level 1
+[node 8000-h1 path-ext]
+[change] Element 5571 at level 1
+[node 5571-h1 seen]
+[change] Down to level 1
+[node Leaf302 path-ext]
+[change] Element 9024 at level 6
+[node 9024-h6 seen]
+[change] Up to target level 6
+[node 5571-h1 create-bin]
+[change] Up to root
+[node 5571-h1 create-bin]
+[edge 5571-h1 Leaf305 height-1]
+[edge 5571-h1 Leaf308 height-1]
+[change] Up to target level 6
+[node 3186-h1 create-bin]
+[change] Up to root
+[node 3186-h1 create-bin]
+[edge 3186-h1 Leaf302 height-1]
+[edge 3186-h1 5571-h1 height-1]
+[change] Up to target level 6
+[node 2017-h3 create-bin]
+[change] Up to root
+[node 2017-h3 create-bin]
+[edge 2017-h3 8000-h1 height-3]
+[edge 2017-h3 3186-h1 height-3]
+[change] Element 9348 at level 1
+[node 9348-h1 seen]
+[change] Down to level 1
+[node 2017-h3 path-ext]
+[change] Element 1836 at level 2
+[node 1836-h2 seen]
+[change] Up to target level 2
+[node 9348-h1 create-bin]
+[change] Up to root
+[node 9348-h1 create-bin]
+[edge 9348-h1 Leaf311 height-1]
+[edge 9348-h1 Leaf314 height-1]
+[change] Element 11 at level 1
+[node 11-h1 seen]
+[change] Down to level 1
+[node 9348-h1 path-ext]
+[change] Element 5671 at level 1
+[node 5671-h1 seen]
+[change] Down to level 1
+[node Leaf317 path-ext]
+[change] Element 4232 at level 2
+[node 4232-h2 seen]
+[change] Up to target level 2
+[node 5671-h1 create-bin]
+[change] Up to root
+[node 5671-h1 create-bin]
+[edge 5671-h1 Leaf320 height-1]
+[edge 5671-h1 Leaf323 height-1]
+[change] Up to target level 2
+[node 11-h1 create-bin]
+[change] Up to root
+[node 11-h1 create-bin]
+[edge 11-h1 Leaf317 height-1]
+[edge 11-h1 5671-h1 height-1]
+[change] Element 6465 at level 1
+[node 6465-h1 seen]
+[change] Down to level 1
+[node 11-h1 path-ext]
+[change] Element 7649 at level 1
+[node 7649-h1 seen]
+[change] Down to level 1
+[node Leaf326 path-ext]
+[change] Element 3931 at level 1
+[node 3931-h1 seen]
+[change] Down to level 1
+[node Leaf329 path-ext]
+[change] Element 3450 at level 1
+[node 3450-h1 seen]
+[change] Down to level 1
+[node Leaf332 path-ext]
+[change] Element 5569 at level 1
+[node 5569-h1 seen]
+[change] Down to level 1
+[node Leaf335 path-ext]
+[change] Element 958 at level 2
+[node 958-h2 seen]
+[change] Up to target level 2
+[node 5569-h1 create-bin]
+[change] Up to root
+[node 5569-h1 create-bin]
+[edge 5569-h1 Leaf338 height-1]
+[edge 5569-h1 Leaf341 height-1]
+[change] Up to target level 2
+[node 3450-h1 create-bin]
+[change] Up to root
+[node 3450-h1 create-bin]
+[edge 3450-h1 Leaf335 height-1]
+[edge 3450-h1 5569-h1 height-1]
+[change] Up to target level 2
+[node 3931-h1 create-bin]
+[change] Up to root
+[node 3931-h1 create-bin]
+[edge 3931-h1 Leaf332 height-1]
+[edge 3931-h1 3450-h1 height-1]
+[change] Up to target level 2
+[node 7649-h1 create-bin]
+[change] Up to root
+[node 7649-h1 create-bin]
+[edge 7649-h1 Leaf329 height-1]
+[edge 7649-h1 3931-h1 height-1]
+[change] Up to target level 2
+[node 6465-h1 create-bin]
+[change] Up to root
+[node 6465-h1 create-bin]
+[edge 6465-h1 Leaf326 height-1]
+[edge 6465-h1 7649-h1 height-1]
+[change] Element 4212 at level 3
+[node 4212-h3 seen]
+[change] Up to target level 3
+[node 958-h2 create-bin]
+[change] Up to root
+[node 958-h2 create-bin]
+[edge 958-h2 6465-h1 height-2]
+[edge 958-h2 Leaf344 height-2]
+[change] Up to target level 3
+[node 4232-h2 create-bin]
+[change] Up to root
+[node 4232-h2 create-bin]
+[edge 4232-h2 11-h1 height-2]
+[edge 4232-h2 958-h2 height-2]
+[change] Up to target level 3
+[node 1836-h2 create-bin]
+[change] Up to root
+[node 1836-h2 create-bin]
+[edge 1836-h2 9348-h1 height-2]
+[edge 1836-h2 4232-h2 height-2]
+[change] Element 8283 at level 2
+[node 8283-h2 seen]
+[change] Down to level 2
+[node 1836-h2 path-ext]
+[change] Element 2101 at level 1
+[node 2101-h1 seen]
+[change] Down to level 1
+[node Leaf347 path-ext]
+[change] Element 4696 at level 2
+[node 4696-h2 seen]
+[change] Up to target level 2
+[node 2101-h1 create-bin]
+[change] Up to root
+[node 2101-h1 create-bin]
+[edge 2101-h1 Leaf350 height-1]
+[edge 2101-h1 Leaf353 height-1]
+[change] Element 809 at level 1
+[node 809-h1 seen]
+[change] Down to level 1
+[node 2101-h1 path-ext]
+[change] Element 1461 at level 1
+[node 1461-h1 seen]
+[change] Down to level 1
+[node Leaf356 path-ext]
+[change] Element 8721 at level 2
+[node 8721-h2 seen]
+[change] Up to target level 2
+[node 1461-h1 create-bin]
+[change] Up to root
+[node 1461-h1 create-bin]
+[edge 1461-h1 Leaf359 height-1]
+[edge 1461-h1 Leaf362 height-1]
+[change] Up to target level 2
+[node 809-h1 create-bin]
+[change] Up to root
+[node 809-h1 create-bin]
+[edge 809-h1 Leaf356 height-1]
+[edge 809-h1 1461-h1 height-1]
+[change] Element 2729 at level 4
+[node 2729-h4 seen]
+[change] Up to target level 4
+[node 8721-h2 create-bin]
+[change] Up to root
+[node 8721-h2 create-bin]
+[edge 8721-h2 809-h1 height-2]
+[edge 8721-h2 Leaf365 height-2]
+[change] Up to target level 4
+[node 4696-h2 create-bin]
+[change] Up to root
+[node 4696-h2 create-bin]
+[edge 4696-h2 2101-h1 height-2]
+[edge 4696-h2 8721-h2 height-2]
+[change] Up to target level 4
+[node 8283-h2 create-bin]
+[change] Up to root
+[node 8283-h2 create-bin]
+[edge 8283-h2 Leaf347 height-2]
+[edge 8283-h2 4696-h2 height-2]
+[change] Up to target level 4
+[node 4212-h3 create-bin]
+[change] Up to root
+[node 4212-h3 create-bin]
+[edge 4212-h3 1836-h2 height-3]
+[edge 4212-h3 8283-h2 height-3]
+[change] Element 1181 at level 1
+[node 1181-h1 seen]
+[change] Down to level 1
+[node 4212-h3 path-ext]
+[change] Element 1697 at level 5
+[node 1697-h5 seen]
+[change] Up to target level 5
+[node 1181-h1 create-bin]
+[change] Up to root
+[node 1181-h1 create-bin]
+[edge 1181-h1 Leaf368 height-1]
+[edge 1181-h1 Leaf371 height-1]
+[change] Up to target level 5
+[node 2729-h4 create-bin]
+[change] Up to root
+[node 2729-h4 create-bin]
+[edge 2729-h4 4212-h3 height-4]
+[edge 2729-h4 1181-h1 height-4]
+[change] Element 6383 at level 1
+[node 6383-h1 seen]
+[change] Down to level 1
+[node 2729-h4 path-ext]
+[change] Element 2776 at level 1
+[node 2776-h1 seen]
+[change] Down to level 1
+[node Leaf374 path-ext]
+[change] Element 2830 at level 2
+[node 2830-h2 seen]
+[change] Up to target level 2
+[node 2776-h1 create-bin]
+[change] Up to root
+[node 2776-h1 create-bin]
+[edge 2776-h1 Leaf377 height-1]
+[edge 2776-h1 Leaf380 height-1]
+[change] Up to target level 2
+[node 6383-h1 create-bin]
+[change] Up to root
+[node 6383-h1 create-bin]
+[edge 6383-h1 Leaf374 height-1]
+[edge 6383-h1 2776-h1 height-1]
+[change] Element 7731 at level 4
+[node 7731-h4 seen]
+[change] Up to target level 4
+[node 2830-h2 create-bin]
+[change] Up to root
+[node 2830-h2 create-bin]
+[edge 2830-h2 6383-h1 height-2]
+[edge 2830-h2 Leaf383 height-2]
+[change] Up to root
+[node 7731-h4 create-bin]
+[edge 7731-h4 2830-h2 height-4]
+[edge 7731-h4 Leaf384 height-4]
+[change] Up to root
+[node 1697-h5 create-bin]
+[edge 1697-h5 2729-h4 height-5]
+[edge 1697-h5 7731-h4 height-5]
+[change] Up to root
+[node 9024-h6 create-bin]
+[edge 9024-h6 2017-h3 height-6]
+[edge 9024-h6 1697-h5 height-6]
+[change] Up to root
+[node 1013-h7 create-bin]
+[edge 1013-h7 7329-h6 height-7]
+[edge 1013-h7 9024-h6 height-7]
+[change] Up to root
+[node 8419-h8 create-bin]
+[edge 8419-h8 3897-h7 height-8]
+[edge 8419-h8 1013-h7 height-8]
+[node 8419-h8 height-8]
+[edge 8419-h8 3897-h7 height-8]
+[node 3897-h7 height-7]
+[edge 3897-h7 5217-h5 height-7]
+[node 5217-h5 height-5]
+[edge 5217-h5 7020-h4 height-5]
+[node 7020-h4 height-4]
+[edge 7020-h4 1641-h3 height-4]
+[node 1641-h3 height-3]
+[edge 1641-h3 9344-h1 height-3]
+[node 9344-h1 height-1]
+[edge 9344-h1 Leaf2 height-1]
+[node Leaf2 leaf]
+[edge 9344-h1 6685-h1 height-1]
+[node 6685-h1 height-1]
+[edge 6685-h1 Leaf5 height-1]
+[node Leaf5 leaf]
+[edge 6685-h1 182-h1 height-1]
+[node 182-h1 height-1]
+[edge 182-h1 Leaf8 height-1]
+[node Leaf8 leaf]
+[edge 182-h1 Leaf11 height-1]
+[node Leaf11 leaf]
+[edge 1641-h3 7500-h3 height-3]
+[node 7500-h3 height-3]
+[edge 7500-h3 439-h2 height-3]
+[node 439-h2 height-2]
+[edge 439-h2 Leaf14 height-2]
+[node Leaf14 leaf]
+[edge 439-h2 Leaf17 height-2]
+[node Leaf17 leaf]
+[edge 7500-h3 4104-h1 height-3]
+[node 4104-h1 height-1]
+[edge 4104-h1 Leaf20 height-1]
+[node Leaf20 leaf]
+[edge 4104-h1 Leaf23 height-1]
+[node Leaf23 leaf]
+[edge 7020-h4 8370-h4 height-4]
+[node 8370-h4 height-4]
+[edge 8370-h4 9921-h3 height-4]
+[node 9921-h3 height-3]
+[edge 9921-h3 Leaf26 height-3]
+[node Leaf26 leaf]
+[edge 9921-h3 Leaf29 height-3]
+[node Leaf29 leaf]
+[edge 8370-h4 Leaf32 height-4]
+[node Leaf32 leaf]
+[edge 5217-h5 8606-h5 height-5]
+[node 8606-h5 height-5]
+[edge 8606-h5 5949-h3 height-5]
+[node 5949-h3 height-3]
+[edge 5949-h3 6885-h2 height-3]
+[node 6885-h2 height-2]
+[edge 6885-h2 Leaf35 height-2]
+[node Leaf35 leaf]
+[edge 6885-h2 Leaf38 height-2]
+[node Leaf38 leaf]
+[edge 5949-h3 3615-h2 height-3]
+[node 3615-h2 height-2]
+[edge 3615-h2 8678-h1 height-2]
+[node 8678-h1 height-1]
+[edge 8678-h1 Leaf41 height-1]
+[node Leaf41 leaf]
+[edge 8678-h1 Leaf44 height-1]
+[node Leaf44 leaf]
+[edge 3615-h2 2401-h2 height-2]
+[node 2401-h2 height-2]
+[edge 2401-h2 4412-h1 height-2]
+[node 4412-h1 height-1]
+[edge 4412-h1 Leaf47 height-1]
+[node Leaf47 leaf]
+[edge 4412-h1 Leaf50 height-1]
+[node Leaf50 leaf]
+[edge 2401-h2 Leaf53 height-2]
+[node Leaf53 leaf]
+[edge 8606-h5 3423-h4 height-5]
+[node 3423-h4 height-4]
+[edge 3423-h4 4014-h3 height-4]
+[node 4014-h3 height-3]
+[edge 4014-h3 3428-h2 height-3]
+[node 3428-h2 height-2]
+[edge 3428-h2 Leaf56 height-2]
+[node Leaf56 leaf]
+[edge 3428-h2 6393-h2 height-2]
+[node 6393-h2 height-2]
+[edge 6393-h2 2869-h1 height-2]
+[node 2869-h1 height-1]
+[edge 2869-h1 Leaf59 height-1]
+[node Leaf59 leaf]
+[edge 2869-h1 7289-h1 height-1]
+[node 7289-h1 height-1]
+[edge 7289-h1 Leaf62 height-1]
+[node Leaf62 leaf]
+[edge 7289-h1 Leaf65 height-1]
+[node Leaf65 leaf]
+[edge 6393-h2 Leaf68 height-2]
+[node Leaf68 leaf]
+[edge 4014-h3 Leaf71 height-3]
+[node Leaf71 leaf]
+[edge 3423-h4 3723-h4 height-4]
+[node 3723-h4 height-4]
+[edge 3723-h4 Leaf74 height-4]
+[node Leaf74 leaf]
+[edge 3723-h4 4803-h4 height-4]
+[node 4803-h4 height-4]
+[edge 4803-h4 6544-h1 height-4]
+[node 6544-h1 height-1]
+[edge 6544-h1 Leaf77 height-1]
+[node Leaf77 leaf]
+[edge 6544-h1 4096-h1 height-1]
+[node 4096-h1 height-1]
+[edge 4096-h1 Leaf80 height-1]
+[node Leaf80 leaf]
+[edge 4096-h1 Leaf83 height-1]
+[node Leaf83 leaf]
+[edge 4803-h4 9649-h2 height-4]
+[node 9649-h2 height-2]
+[edge 9649-h2 8500-h1 height-2]
+[node 8500-h1 height-1]
+[edge 8500-h1 Leaf86 height-1]
+[node Leaf86 leaf]
+[edge 8500-h1 3570-h1 height-1]
+[node 3570-h1 height-1]
+[edge 3570-h1 Leaf89 height-1]
+[node Leaf89 leaf]
+[edge 3570-h1 Leaf92 height-1]
+[node Leaf92 leaf]
+[edge 9649-h2 3212-h2 height-2]
+[node 3212-h2 height-2]
+[edge 3212-h2 Leaf95 height-2]
+[node Leaf95 leaf]
+[edge 3212-h2 4755-h2 height-2]
+[node 4755-h2 height-2]
+[edge 4755-h2 Leaf98 height-2]
+[node Leaf98 leaf]
+[edge 4755-h2 357-h2 height-2]
+[node 357-h2 height-2]
+[edge 357-h2 6211-h1 height-2]
+[node 6211-h1 height-1]
+[edge 6211-h1 Leaf101 height-1]
+[node Leaf101 leaf]
+[edge 6211-h1 Leaf104 height-1]
+[node Leaf104 leaf]
+[edge 357-h2 1197-h1 height-2]
+[node 1197-h1 height-1]
+[edge 1197-h1 Leaf107 height-1]
+[node Leaf107 leaf]
+[edge 1197-h1 Leaf110 height-1]
+[node Leaf110 leaf]
+[edge 3897-h7 1376-h5 height-7]
+[node 1376-h5 height-5]
+[edge 1376-h5 8954-h4 height-5]
+[node 8954-h4 height-4]
+[edge 8954-h4 9970-h3 height-4]
+[node 9970-h3 height-3]
+[edge 9970-h3 2183-h2 height-3]
+[node 2183-h2 height-2]
+[edge 2183-h2 6460-h1 height-2]
+[node 6460-h1 height-1]
+[edge 6460-h1 Leaf113 height-1]
+[node Leaf113 leaf]
+[edge 6460-h1 Leaf116 height-1]
+[node Leaf116 leaf]
+[edge 2183-h2 7763-h1 height-2]
+[node 7763-h1 height-1]
+[edge 7763-h1 Leaf119 height-1]
+[node Leaf119 leaf]
+[edge 7763-h1 4720-h1 height-1]
+[node 4720-h1 height-1]
+[edge 4720-h1 Leaf122 height-1]
+[node Leaf122 leaf]
+[edge 4720-h1 3599-h1 height-1]
+[node 3599-h1 height-1]
+[edge 3599-h1 Leaf125 height-1]
+[node Leaf125 leaf]
+[edge 3599-h1 6559-h1 height-1]
+[node 6559-h1 height-1]
+[edge 6559-h1 Leaf128 height-1]
+[node Leaf128 leaf]
+[edge 6559-h1 Leaf131 height-1]
+[node Leaf131 leaf]
+[edge 9970-h3 5220-h3 height-3]
+[node 5220-h3 height-3]
+[edge 5220-h3 6884-h2 height-3]
+[node 6884-h2 height-2]
+[edge 6884-h2 Leaf134 height-2]
+[node Leaf134 leaf]
+[edge 6884-h2 9243-h1 height-2]
+[node 9243-h1 height-1]
+[edge 9243-h1 Leaf137 height-1]
+[node Leaf137 leaf]
+[edge 9243-h1 Leaf140 height-1]
+[node Leaf140 leaf]
+[edge 5220-h3 5546-h2 height-3]
+[node 5546-h2 height-2]
+[edge 5546-h2 Leaf143 height-2]
+[node Leaf143 leaf]
+[edge 5546-h2 Leaf146 height-2]
+[node Leaf146 leaf]
+[edge 8954-h4 9051-h3 height-4]
+[node 9051-h3 height-3]
+[edge 9051-h3 5518-h2 height-3]
+[node 5518-h2 height-2]
+[edge 5518-h2 Leaf149 height-2]
+[node Leaf149 leaf]
+[edge 5518-h2 3358-h2 height-2]
+[node 3358-h2 height-2]
+[edge 3358-h2 8988-h1 height-2]
+[node 8988-h1 height-1]
+[edge 8988-h1 Leaf152 height-1]
+[node Leaf152 leaf]
+[edge 8988-h1 Leaf155 height-1]
+[node Leaf155 leaf]
+[edge 3358-h2 424-h1 height-2]
+[node 424-h1 height-1]
+[edge 424-h1 Leaf158 height-1]
+[node Leaf158 leaf]
+[edge 424-h1 Leaf161 height-1]
+[node Leaf161 leaf]
+[edge 9051-h3 3069-h2 height-3]
+[node 3069-h2 height-2]
+[edge 3069-h2 2309-h1 height-2]
+[node 2309-h1 height-1]
+[edge 2309-h1 Leaf164 height-1]
+[node Leaf164 leaf]
+[edge 2309-h1 Leaf167 height-1]
+[node Leaf167 leaf]
+[edge 3069-h2 Leaf170 height-2]
+[node Leaf170 leaf]
+[edge 1376-h5 7122-h2 height-5]
+[node 7122-h2 height-2]
+[edge 7122-h2 4286-h1 height-2]
+[node 4286-h1 height-1]
+[edge 4286-h1 Leaf173 height-1]
+[node Leaf173 leaf]
+[edge 4286-h1 6438-h1 height-1]
+[node 6438-h1 height-1]
+[edge 6438-h1 Leaf176 height-1]
+[node Leaf176 leaf]
+[edge 6438-h1 Leaf179 height-1]
+[node Leaf179 leaf]
+[edge 7122-h2 1952-h2 height-2]
+[node 1952-h2 height-2]
+[edge 1952-h2 9265-h1 height-2]
+[node 9265-h1 height-1]
+[edge 9265-h1 Leaf182 height-1]
+[node Leaf182 leaf]
+[edge 9265-h1 Leaf185 height-1]
+[node Leaf185 leaf]
+[edge 1952-h2 Leaf188 height-2]
+[node Leaf188 leaf]
+[edge 8419-h8 1013-h7 height-8]
+[node 1013-h7 height-7]
+[edge 1013-h7 7329-h6 height-7]
+[node 7329-h6 height-6]
+[edge 7329-h6 5136-h4 height-6]
+[node 5136-h4 height-4]
+[edge 5136-h4 2782-h2 height-4]
+[node 2782-h2 height-2]
+[edge 2782-h2 4683-h1 height-2]
+[node 4683-h1 height-1]
+[edge 4683-h1 Leaf191 height-1]
+[node Leaf191 leaf]
+[edge 4683-h1 Leaf194 height-1]
+[node Leaf194 leaf]
+[edge 2782-h2 3740-h2 height-2]
+[node 3740-h2 height-2]
+[edge 3740-h2 Leaf197 height-2]
+[node Leaf197 leaf]
+[edge 3740-h2 9835-h2 height-2]
+[node 9835-h2 height-2]
+[edge 9835-h2 6270-h1 height-2]
+[node 6270-h1 height-1]
+[edge 6270-h1 Leaf200 height-1]
+[node Leaf200 leaf]
+[edge 6270-h1 Leaf203 height-1]
+[node Leaf203 leaf]
+[edge 9835-h2 Leaf206 height-2]
+[node Leaf206 leaf]
+[edge 5136-h4 5324-h3 height-4]
+[node 5324-h3 height-3]
+[edge 5324-h3 2168-h2 height-3]
+[node 2168-h2 height-2]
+[edge 2168-h2 5791-h1 height-2]
+[node 5791-h1 height-1]
+[edge 5791-h1 Leaf209 height-1]
+[node Leaf209 leaf]
+[edge 5791-h1 Leaf212 height-1]
+[node Leaf212 leaf]
+[edge 2168-h2 Leaf215 height-2]
+[node Leaf215 leaf]
+[edge 5324-h3 7153-h3 height-3]
+[node 7153-h3 height-3]
+[edge 7153-h3 8156-h2 height-3]
+[node 8156-h2 height-2]
+[edge 8156-h2 2222-h1 height-2]
+[node 2222-h1 height-1]
+[edge 2222-h1 Leaf218 height-1]
+[node Leaf218 leaf]
+[edge 2222-h1 Leaf221 height-1]
+[node Leaf221 leaf]
+[edge 8156-h2 5636-h2 height-2]
+[node 5636-h2 height-2]
+[edge 5636-h2 2835-h1 height-2]
+[node 2835-h1 height-1]
+[edge 2835-h1 Leaf224 height-1]
+[node Leaf224 leaf]
+[edge 2835-h1 2328-h1 height-1]
+[node 2328-h1 height-1]
+[edge 2328-h1 Leaf227 height-1]
+[node Leaf227 leaf]
+[edge 2328-h1 Leaf230 height-1]
+[node Leaf230 leaf]
+[edge 5636-h2 9233-h1 height-2]
+[node 9233-h1 height-1]
+[edge 9233-h1 Leaf233 height-1]
+[node Leaf233 leaf]
+[edge 9233-h1 Leaf236 height-1]
+[node Leaf236 leaf]
+[edge 7153-h3 6357-h3 height-3]
+[node 6357-h3 height-3]
+[edge 6357-h3 2069-h2 height-3]
+[node 2069-h2 height-2]
+[edge 2069-h2 2671-h1 height-2]
+[node 2671-h1 height-1]
+[edge 2671-h1 Leaf239 height-1]
+[node Leaf239 leaf]
+[edge 2671-h1 Leaf242 height-1]
+[node Leaf242 leaf]
+[edge 2069-h2 3095-h1 height-2]
+[node 3095-h1 height-1]
+[edge 3095-h1 Leaf245 height-1]
+[node Leaf245 leaf]
+[edge 3095-h1 Leaf248 height-1]
+[node Leaf248 leaf]
+[edge 6357-h3 824-h2 height-3]
+[node 824-h2 height-2]
+[edge 824-h2 7092-h1 height-2]
+[node 7092-h1 height-1]
+[edge 7092-h1 Leaf251 height-1]
+[node Leaf251 leaf]
+[edge 7092-h1 Leaf254 height-1]
+[node Leaf254 leaf]
+[edge 824-h2 6133-h2 height-2]
+[node 6133-h2 height-2]
+[edge 6133-h2 146-h1 height-2]
+[node 146-h1 height-1]
+[edge 146-h1 Leaf257 height-1]
+[node Leaf257 leaf]
+[edge 146-h1 6278-h1 height-1]
+[node 6278-h1 height-1]
+[edge 6278-h1 Leaf260 height-1]
+[node Leaf260 leaf]
+[edge 6278-h1 Leaf263 height-1]
+[node Leaf263 leaf]
+[edge 6133-h2 4989-h2 height-2]
+[node 4989-h2 height-2]
+[edge 4989-h2 8688-h1 height-2]
+[node 8688-h1 height-1]
+[edge 8688-h1 Leaf266 height-1]
+[node Leaf266 leaf]
+[edge 8688-h1 Leaf269 height-1]
+[node Leaf269 leaf]
+[edge 4989-h2 2456-h2 height-2]
+[node 2456-h2 height-2]
+[edge 2456-h2 8295-h1 height-2]
+[node 8295-h1 height-1]
+[edge 8295-h1 Leaf272 height-1]
+[node Leaf272 leaf]
+[edge 8295-h1 3158-h1 height-1]
+[node 3158-h1 height-1]
+[edge 3158-h1 Leaf275 height-1]
+[node Leaf275 leaf]
+[edge 3158-h1 8393-h1 height-1]
+[node 8393-h1 height-1]
+[edge 8393-h1 Leaf278 height-1]
+[node Leaf278 leaf]
+[edge 8393-h1 601-h1 height-1]
+[node 601-h1 height-1]
+[edge 601-h1 Leaf281 height-1]
+[node Leaf281 leaf]
+[edge 601-h1 Leaf284 height-1]
+[node Leaf284 leaf]
+[edge 2456-h2 7513-h1 height-2]
+[node 7513-h1 height-1]
+[edge 7513-h1 Leaf287 height-1]
+[node Leaf287 leaf]
+[edge 7513-h1 Leaf290 height-1]
+[node Leaf290 leaf]
+[edge 7329-h6 Leaf293 height-6]
+[node Leaf293 leaf]
+[edge 1013-h7 9024-h6 height-7]
+[node 9024-h6 height-6]
+[edge 9024-h6 2017-h3 height-6]
+[node 2017-h3 height-3]
+[edge 2017-h3 8000-h1 height-3]
+[node 8000-h1 height-1]
+[edge 8000-h1 Leaf296 height-1]
+[node Leaf296 leaf]
+[edge 8000-h1 Leaf299 height-1]
+[node Leaf299 leaf]
+[edge 2017-h3 3186-h1 height-3]
+[node 3186-h1 height-1]
+[edge 3186-h1 Leaf302 height-1]
+[node Leaf302 leaf]
+[edge 3186-h1 5571-h1 height-1]
+[node 5571-h1 height-1]
+[edge 5571-h1 Leaf305 height-1]
+[node Leaf305 leaf]
+[edge 5571-h1 Leaf308 height-1]
+[node Leaf308 leaf]
+[edge 9024-h6 1697-h5 height-6]
+[node 1697-h5 height-5]
+[edge 1697-h5 2729-h4 height-5]
+[node 2729-h4 height-4]
+[edge 2729-h4 4212-h3 height-4]
+[node 4212-h3 height-3]
+[edge 4212-h3 1836-h2 height-3]
+[node 1836-h2 height-2]
+[edge 1836-h2 9348-h1 height-2]
+[node 9348-h1 height-1]
+[edge 9348-h1 Leaf311 height-1]
+[node Leaf311 leaf]
+[edge 9348-h1 Leaf314 height-1]
+[node Leaf314 leaf]
+[edge 1836-h2 4232-h2 height-2]
+[node 4232-h2 height-2]
+[edge 4232-h2 11-h1 height-2]
+[node 11-h1 height-1]
+[edge 11-h1 Leaf317 height-1]
+[node Leaf317 leaf]
+[edge 11-h1 5671-h1 height-1]
+[node 5671-h1 height-1]
+[edge 5671-h1 Leaf320 height-1]
+[node Leaf320 leaf]
+[edge 5671-h1 Leaf323 height-1]
+[node Leaf323 leaf]
+[edge 4232-h2 958-h2 height-2]
+[node 958-h2 height-2]
+[edge 958-h2 6465-h1 height-2]
+[node 6465-h1 height-1]
+[edge 6465-h1 Leaf326 height-1]
+[node Leaf326 leaf]
+[edge 6465-h1 7649-h1 height-1]
+[node 7649-h1 height-1]
+[edge 7649-h1 Leaf329 height-1]
+[node Leaf329 leaf]
+[edge 7649-h1 3931-h1 height-1]
+[node 3931-h1 height-1]
+[edge 3931-h1 Leaf332 height-1]
+[node Leaf332 leaf]
+[edge 3931-h1 3450-h1 height-1]
+[node 3450-h1 height-1]
+[edge 3450-h1 Leaf335 height-1]
+[node Leaf335 leaf]
+[edge 3450-h1 5569-h1 height-1]
+[node 5569-h1 height-1]
+[edge 5569-h1 Leaf338 height-1]
+[node Leaf338 leaf]
+[edge 5569-h1 Leaf341 height-1]
+[node Leaf341 leaf]
+[edge 958-h2 Leaf344 height-2]
+[node Leaf344 leaf]
+[edge 4212-h3 8283-h2 height-3]
+[node 8283-h2 height-2]
+[edge 8283-h2 Leaf347 height-2]
+[node Leaf347 leaf]
+[edge 8283-h2 4696-h2 height-2]
+[node 4696-h2 height-2]
+[edge 4696-h2 2101-h1 height-2]
+[node 2101-h1 height-1]
+[edge 2101-h1 Leaf350 height-1]
+[node Leaf350 leaf]
+[edge 2101-h1 Leaf353 height-1]
+[node Leaf353 leaf]
+[edge 4696-h2 8721-h2 height-2]
+[node 8721-h2 height-2]
+[edge 8721-h2 809-h1 height-2]
+[node 809-h1 height-1]
+[edge 809-h1 Leaf356 height-1]
+[node Leaf356 leaf]
+[edge 809-h1 1461-h1 height-1]
+[node 1461-h1 height-1]
+[edge 1461-h1 Leaf359 height-1]
+[node Leaf359 leaf]
+[edge 1461-h1 Leaf362 height-1]
+[node Leaf362 leaf]
+[edge 8721-h2 Leaf365 height-2]
+[node Leaf365 leaf]
+[edge 2729-h4 1181-h1 height-4]
+[node 1181-h1 height-1]
+[edge 1181-h1 Leaf368 height-1]
+[node Leaf368 leaf]
+[edge 1181-h1 Leaf371 height-1]
+[node Leaf371 leaf]
+[edge 1697-h5 7731-h4 height-5]
+[node 7731-h4 height-4]
+[edge 7731-h4 2830-h2 height-4]
+[node 2830-h2 height-2]
+[edge 2830-h2 6383-h1 height-2]
+[node 6383-h1 height-1]
+[edge 6383-h1 Leaf374 height-1]
+[node Leaf374 leaf]
+[edge 6383-h1 2776-h1 height-1]
+[node 2776-h1 height-1]
+[edge 2776-h1 Leaf377 height-1]
+[node Leaf377 leaf]
+[edge 2776-h1 Leaf380 height-1]
+[node Leaf380 leaf]
+[edge 2830-h2 Leaf383 height-2]
+[node Leaf383 leaf]
+[edge 7731-h4 Leaf384 height-4]
+[node Leaf384 leaf]

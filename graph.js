@@ -172,13 +172,15 @@ var loader = {
         //Initialize all known states to 'none'
         loader.currentNodeStates = [];
         for(var i = 0; i<moviedata.nodeIds.length; i++){
-            loader.currentNodeStates[i] = {state: STATE_NONE, name: '', info: ''};
-            newState.nodeStates[i] = {state: STATE_NONE, name: '', info: ''};
+            var name = moviedata.nodeIds[i];
+            loader.currentNodeStates[i] = {state: STATE_NONE, name: name, info: ''};
+            newState.nodeStates[i] = {state: STATE_NONE, name: name, info: ''};
         }
         loader.currentEdgeStates = [];
         for(var i = 0; i<moviedata.edgeIds.length; i++){
-            loader.currentEdgeStates[i] = {state: STATE_NONE, name: '', info: ''};
-            newState.edgeStates[i] = {state: STATE_NONE, name: '', info: ''};
+            var name = moviedata.edgeIds[i].replace(/ /g,'-');
+            loader.currentEdgeStates[i] = {state: STATE_NONE, name: name, info: ''};
+            newState.edgeStates[i] = {state: STATE_NONE, name: name, info: ''};
         }
         //increment
         loader.currentState = moviedata.states.length;
@@ -245,6 +247,8 @@ var loader = {
         _.delay(loader.layout, 50);
     },
     addNode: function(id, state, name, info){
+        //use id for name if it's only whitespace
+        if(name.match(/^\s*$/)) name = id;
         //init
         if(loader.currentState == -1) loader.addState("None","");
         var cs = moviedata.states[loader.currentState];
@@ -281,6 +285,8 @@ var loader = {
         moviedata.nodeSize[nodeIndex] = {width: _.max([os.width, ns.width]), height: _.max([os.height, ns.height])};
     },
     addEdge: function(from, to, tag, state, name, info){
+        //use id for name if it's only whitespace
+        if(name.match(/^\s*$/)) name = [from,to,tag].join("-");
         //init
         if(loader.currentState == -1) loader.addState("None","");
         var cs = moviedata.states[loader.currentState];
@@ -320,9 +326,9 @@ var loader = {
             nodeIndex = moviedata.nodeIds.length;
             moviedata.nodeIds.push(id);
             //retroactive add
-            loader.currentNodeStates[nodeIndex] = {state: STATE_NONE, name: '', info: ''};
+            loader.currentNodeStates[nodeIndex] = {state: STATE_NONE, name: id, info: ''};
             for(var i = 0; i < moviedata.states.length; i++){
-                moviedata.states[i].nodeStates[nodeIndex] = {state: STATE_NONE, name: '', info: ''};
+                moviedata.states[i].nodeStates[nodeIndex] = {state: STATE_NONE, name: id, info: ''};
             }
             //init size
             moviedata.nodeSize[nodeIndex] = calcSize("min");
@@ -349,9 +355,10 @@ var loader = {
             edgeIndex = moviedata.edgeIds.length;
             moviedata.edgeIds.push(id);
             //retroactive add
-            loader.currentEdgeStates[edgeIndex] = {state: STATE_NONE, name: '', info: ''};
+            var name = id.replace(/ /g,'-');
+            loader.currentEdgeStates[edgeIndex] = {state: STATE_NONE, name: name, info: ''};
             for(var i = 0; i < moviedata.states.length; i++){
-                moviedata.states[i].edgeStates[edgeIndex] = {state: STATE_NONE, name: '', info: ''};
+                moviedata.states[i].edgeStates[edgeIndex] = {state: STATE_NONE, name: name, info: ''};
             }
             //stage
             moviedata.edgeViews[edgeIndex] = makeLink(from, to);
