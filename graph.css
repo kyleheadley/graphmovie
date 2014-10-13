@@ -78,6 +78,10 @@
   overflow: auto;
 }
 
+#dolayout {
+  padding: 4;
+}
+
 /* node shadow */
 .element.basic.Rect rect {
    /* Webkit */

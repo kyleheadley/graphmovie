@@ -32,7 +32,7 @@ var moviedata = {
     zoom: 0.5,
     width: 400,
     height: 400,
-    firstUnLayedOutState: 0,
+    firstUnLayedOutState: {n:0,e:0,b:0,c:0},
     nodeIds: [],
     nodeViews: [],
     nodeSize: [],
@@ -369,8 +369,10 @@ var loader = {
     },
     layout: function(){
         var totalStates = moviedata.states.length;
+        if(totalStates == 0) return;
+        var f = moviedata.firstUnLayedOutState;
         //reset all node sizes
-        for(var i=0; i<moviedata.nodeSize.length;i++){
+        for(var i=f.n; i<moviedata.nodeSize.length;i++){
             moviedata.nodeViews[i].set('size', moviedata.nodeSize[i]);
         }
         //layout
@@ -380,11 +382,11 @@ var loader = {
             rankDir: "BT"
         });
         //cache the view elements
-        for(var i=0; i<moviedata.nodeViews.length; i++){
+        for(var i=f.n; i<moviedata.nodeViews.length; i++){
             var model = moviedata.nodeViews[i];
             moviedata.nodeViews[i] = V(mainDisplay.findViewByModel(model).el);
         }
-        for(i=0;i<moviedata.edgeViews.length;i++){
+        for(i=f.e;i<moviedata.edgeViews.length;i++){
             var model = moviedata.edgeViews[i];
             moviedata.edgeViews[i] = V(mainDisplay.findViewByModel(model).el);
         }
@@ -393,28 +395,39 @@ var loader = {
         moviedata.width = size.width + window.innerWidth;
         adjustPaper();
         //setup first states
-        moviedata.info = titleInfoText(moviedata.states[0].changes[0]);
-        for(var i=0;i<moviedata.nodeViews.length;i++){
-            moviedata.nodeViews[i].addClass(moviedata.states[0].nodeStates[i].state);
-            moviedata.info += nodeInfoText(moviedata.states[0].nodeStates[i],i)
-            //add names
-            //moviedata.nodeViews[i].findOne("text").text(moviedata.states[0].nodeStates[i].name);
+        if(f.b == 0 && f.c == 0){
+            moviedata.info = titleInfoText(moviedata.states[0].changes[0]);
+            for(var i=0;i<moviedata.nodeViews.length;i++){
+                moviedata.nodeViews[i].addClass(moviedata.states[0].nodeStates[i].state);
+                moviedata.info += nodeInfoText(moviedata.states[0].nodeStates[i],i)
+                //add names
+                //moviedata.nodeViews[i].findOne("text").text(moviedata.states[0].nodeStates[i].name);
+            }
+            for(var i=0;i<moviedata.edgeViews.length;i++){
+                moviedata.edgeViews[i].addClass(moviedata.states[0].edgeStates[i].state);
+                moviedata.info += edgeInfoText(moviedata.states[0].edgeStates[i],i)
+            }
+            $('#infobox').html(moviedata.info);
+            //select the first state
+            moviedata.currentState = {b:0,c:0};
+            $('#list').val('0c0');
         }
-        for(var i=0;i<moviedata.edgeViews.length;i++){
-            moviedata.edgeViews[i].addClass(moviedata.states[0].edgeStates[i].state);
-            moviedata.info += edgeInfoText(moviedata.states[0].edgeStates[i],i)
-        }
-        $('#infobox').html(moviedata.info);
         //setup '#list'
-        for(var i=0; i<moviedata.states.length; i++){
+        var first = f.b-1;
+        if (first == -1) first = 0;
+        for(var i=first; i<moviedata.states.length; i++){
             for(var j=0; j<moviedata.states[i].changes.length; j++){
                 var state = moviedata.states[i].changes[j];
                 state.$op.val(i+'c'+j).text(state.title);
             }
         }
-        //select the first state
-        moviedata.currentState = {b:0,c:0};
-        $('#list').val('0c0');
+        //increment current layout position
+        moviedata.firstUnLayedOutState = {
+            n: moviedata.nodeIds.length,
+            e: moviedata.edgeIds.length,
+            b: moviedata.states.length,
+            c: moviedata.states[moviedata.states.length-1].changes.length
+        }
         //allow user to use arrow keys without clicking
         $('#list').focus();
     }
@@ -573,6 +586,7 @@ function init(){
     $('#mode').change(handleModeChange);
     $('#zoomnum').change(handleZoomText);
     $('#style').change(handleStyleChange);
+    $('#dolayout').on("click", loader.layout);
     //initial css load
     handleStyleChange();
 }
@@ -656,7 +670,7 @@ function adjustPaper(){
 
 function resetData(){
     //clear main data object
-    moviedata.firstUnLayedOutState = 0;
+    moviedata.firstUnLayedOutState = {n:0,e:0,b:0,c:0};
     moviedata.nodeIds = [];
     moviedata.nodeViews = [];
     moviedata.nodeSize = [];
