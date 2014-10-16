@@ -8,6 +8,35 @@
 //future
 //TODO: bind the external layout with the internal layout
 
+/**************/
+/* Url Params */
+/**************/
+
+//main params
+var urlParams;
+//constructor for defaults
+function setUrlParamDefaults() {
+    //file to load
+    this.file = null,
+    //layout direction: TB, BT, LR, RL
+    this.dir = "BT"
+}
+
+//this is run during init
+function setUrlParams(){
+    (window.onpopstate = function () {
+    var match,
+    pl     = /\+/g,  // Regex for replacing addition symbol with a space
+    search = /([^&=]+)=?([^&]*)/g,
+    decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+    query  = window.location.search.substring(1);
+
+    urlParams = new setUrlParamDefaults();
+    while (match = search.exec(query))
+        urlParams[decode(match[1])] = decode(match[2]);
+    })();
+}
+
 /*************/
 /* init      */
 /*************/
@@ -379,7 +408,7 @@ var loader = {
         var size = joint.layout.DirectedGraph.layout(mainGraph, {
             setLinkVertices: false,
             nodeSep: 5,
-            rankDir: "BT"
+            rankDir: urlParams["dir"]
         });
         //cache the view elements
         for(var i=f.n; i<moviedata.nodeViews.length; i++){
@@ -444,13 +473,17 @@ function loadFile(file) {
     reader.onload = function(e) {
         //clear view
         resetData();
+        generateMovie(e.target.result);
+    }
+    if(file) reader.readAsText(file);
+}
+
+function generateMovie(logText){
         //prep parser
-        parser.useString(e.target.result)
+        parser.useString(logText)
         //parse data
         parser.parseLines();
         //currently data displayed automatically at completion of parse
-    }
-    if(file) reader.readAsText(file);
 }
 
 /***********/
@@ -587,8 +620,14 @@ function init(){
     $('#zoomnum').change(handleZoomText);
     $('#style').change(handleStyleChange);
     $('#dolayout').on("click", loader.layout);
+    setUrlParams();
     //initial css load
     handleStyleChange();
+    //load url if supplied
+    if(urlParams.file != null) {   
+        $.get(urlParams["file"], generateMovie)
+    }
+ 
 }
 
 function handleFileSelect(event) {
