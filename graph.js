@@ -468,7 +468,6 @@ var loader = {
 /*****************/
 //handler for new file selection
 function loadFile(file) {
-    $('#list').empty();
     var reader = new FileReader();
     reader.onload = function(e) {
         //clear view
@@ -479,6 +478,7 @@ function loadFile(file) {
 }
 
 function generateMovie(logText){
+        $('#list').empty();
         //prep parser
         parser.useString(logText)
         //parse data
