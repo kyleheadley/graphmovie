@@ -19,49 +19,17 @@
 .nonactive text {
   stroke: #c0c0c0;
 }
-.missing rect {
-  fill: #080808;
-}
-.missing text {
-  stroke: #dd0000;
-}
 
 
 /* document layout */
 
-#mainDisplay {
-  overflow: scroll;
-  position: fixed;
-  top: 5px;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
-  z-index: -1; /*keep it under everything else */
+.graphmoviepane {
+  padding: 0px;
+  border: 0px;
 }
 
 #initcontrols {
-  padding: 0px;
   overflow: hidden;
-}
-
-#listpane {
-  padding: 0px;
-}
-
-#controls-top {
-  padding: 0px;
-  position: fixed;
-  top: 0px;
-  height: 25px;
-  left: 250px;
-}
-
-#controls-left {
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  width: 250px;
-  bottom: 15px;
 }
 
 #list {
@@ -75,11 +43,6 @@
   padding: 2px;
   font-family: monospace;
   font-size: 8px;
-  overflow: auto;
-}
-
-#dolayout {
-  padding: 4;
 }
 
 /* node shadow */

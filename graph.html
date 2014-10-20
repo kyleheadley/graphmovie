@@ -6,8 +6,8 @@
 <link rel="stylesheet" type="text/css" href="graph.css" />
 <link id="csschoice" rel="stylesheet" type="text/css" href="" />
 
-<div id="controls-left">
-  <div id="initcontrols">
+<div id="controls-left" class="graphmoviepane">
+  <div id="initcontrols" class="graphmoviepane">
     <input id="file" type="file" name="file" />
     <select id="style">
     	<option value="colors">Simple colors</option>
@@ -16,22 +16,24 @@
     </select>
     <button id="dolayout">Layout Now(beta)</button>
   </div>
-  <div id="listpane">
+  <div id="listpane" class="graphmoviepane">
     <select id="list" size="2">
     	<option value="-1c-1">No file selected</option>
     </select>
   </div>
-  <div id="infobox"></div>
+  <div id="infobox" class="graphmoviepane"></div>
 </div>
-<div id="controls-top">
-	<select id="mode">
-		<option value="all" selected>View full state</option>
-		<option value="diff">Changes only</option>
-		<option value="no-change">Skip changes</option>
-	</select>
-	<input id="zoomnum" type="number" min="10" max="200" step="5" value="50"/>
+<div id="centerpane" class="graphmoviepane">
+  <div id="controls-top" class="graphmoviepane">
+  	<select id="mode">
+  		<option value="all" selected>View full state</option>
+  		<option value="diff">Changes only</option>
+  		<option value="no-change">Skip changes</option>
+  	</select>
+  	<input id="zoomnum" type="number" min="10" max="200" step="5" value="50"/>
+  </div>
+  <div id="mainDisplay" class="graphmoviepane"></div>
 </div>
-<div id="mainDisplay"></div>
 
 <script type="text/javascript" src="lib/joint.min.js"></script>
 <script type="text/javascript" src="lib/joint.layout.DirectedGraph.min.js"></script>
@@ -40,6 +42,13 @@
 
 <script>
   $(document).ready(function () {
+    $('body').layout({
+      west__paneSelector: "#controls-left",
+      center__paneSelector: "#centerpane",
+      west__size: 250,
+      spacing_open: 5,
+      spacing_closed: 5
+    });
     $('#controls-left').layout({ 
       north__paneSelector: "#initcontrols",
       center__paneSelector: "#listpane",
@@ -48,6 +57,14 @@
       spacing_open: 5,
       spacing_closed: 5,
       minSize: 50
+    });
+    $('#centerpane').layout({
+      north__paneSelector: "#controls-top",
+      center__paneSelector: "#mainDisplay",
+      north__size: 30,
+      spacing_open: 5,
+      spacing_closed: 5,
+      minSize: 30
     });
   });
 </script>
