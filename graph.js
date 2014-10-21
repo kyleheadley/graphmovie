@@ -1,12 +1,5 @@
-//major
-//TODO: write style.add()
-//TODO: add titles as names
-
 //minor
 //TODO: combine edge and node code where possible
-
-//future
-//TODO: bind the external layout with the internal layout
 
 /**************/
 /* Url Params */
@@ -16,13 +9,13 @@
 var urlParams;
 //constructor for defaults
 function setUrlParamDefaults() {
-    //file to load
+    //file to load on startup
     this.file = null,
     //layout direction: TB, BT, LR, RL
     this.dir = "BT"
 }
 
-//this is run during init
+//this is run during init (from stackoverflow)
 function setUrlParams(){
     (window.onpopstate = function () {
     var match,
@@ -41,10 +34,6 @@ function setUrlParams(){
 /* init      */
 /*************/
 
-//this is the only way I could get the layout the way I wanted it...
-var LEFT_CONTROL_BAR_WIDTH = 250;
-var TOP_CONTROL_BAR_HEIGHT = 30;
-
 var STATE_NONE = 'nonactive'; //default undeclared element
 var STATE_UNKNOWN = 'active'; //default undeclared state
 
@@ -52,8 +41,6 @@ var STATUS_LOADING = 'loading';
 var STATUS_WAITING = 'waiting';
 
 var NODE_TEXT_SIZE = 8;
-
-$( document ).ready(init);
 
 //create global objects
 var moviedata = {
@@ -92,9 +79,6 @@ var stagingDisplay = new joint.dia.Paper({
     model: stagingGraph
 });
 */
-
-//move the paper out from under the controls
-V(mainDisplay.viewport).translate(LEFT_CONTROL_BAR_WIDTH + 2, TOP_CONTROL_BAR_HEIGHT + 2)
 
 /***********/
 /* Parsing */
@@ -697,14 +681,8 @@ function adjustPaper(){
     var h = moviedata.height;
     var w = moviedata.width;
     var z = moviedata.zoom;
-    //move the paper out from under the controls
-    V(mainDisplay.viewport).translate(-LEFT_CONTROL_BAR_WIDTH - 2, -TOP_CONTROL_BAR_HEIGHT - 2)
     V(mainDisplay.viewport).scale(z,z);
-    V(mainDisplay.viewport).translate(LEFT_CONTROL_BAR_WIDTH + 2, TOP_CONTROL_BAR_HEIGHT + 2)
-    mainDisplay.setDimensions(
-        LEFT_CONTROL_BAR_WIDTH + w*z,
-        TOP_CONTROL_BAR_HEIGHT+ h*z
-    );
+    mainDisplay.setDimensions(w*z,h*z);
 }
 
 function resetData(){
@@ -817,4 +795,8 @@ function titleInfoText(item) {
     if(item.info == "") return "";
     return "<i>"+item.info.replace(/(?:\r\n|\r|\n)/g, '<br />')+"</i><br />"
 }
+
+//start up everything
+$( document ).ready(init);
+
 
