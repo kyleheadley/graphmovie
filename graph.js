@@ -1,5 +1,6 @@
 //minor
 //TODO: combine edge and node code where possible
+//TODO: fix weak edge state when re-laying out
 
 /**************/
 /* Url Params */
@@ -54,6 +55,7 @@ var moviedata = {
     nodeSize: [],
     edgeIds: [],
     edgeViews: [],
+    weakEdges: [],
     states: [],
     currentState: {b:-1,c:-1},
     info: ""
@@ -144,11 +146,20 @@ var parser = {
                 break;
             case 'edge':
                 if(args.length >= 4){
-                    loader.addEdge(args[0], args[1], args[2], args[3], title, text);
+                    loader.addEdge(args[0], args[1], args[2], args[3], title, text, false);
                 }else if(args.length == 3){
-                     loader.addEdge(args[0], args[1], '', args[2], title, text);
+                     loader.addEdge(args[0], args[1], '', args[2], title, text, false);
                 }else if(args.length == 2){
-                     loader.addEdge(args[0], args[1], '', STATE_UNKNOWN, title, text);
+                     loader.addEdge(args[0], args[1], '', STATE_UNKNOWN, title, text, false);
+                }
+                break;
+            case 'weakedge':
+                if(args.length >= 4){
+                    loader.addEdge(args[0], args[1], args[2], args[3], title, text, true);
+                }else if(args.length == 3){
+                     loader.addEdge(args[0], args[1], '', args[2], title, text, true);
+                }else if(args.length == 2){
+                     loader.addEdge(args[0], args[1], '', STATE_UNKNOWN, title, text, true);
                 }
                 break;
         }
@@ -257,7 +268,7 @@ var loader = {
         if(loader.currentState >= 0){
             moviedata.states[loader.currentState].changes[loader.currentChange].$op.text('Awaiting Layout ...');
         }
-        _.delay(loader.layout, 50);
+        _.delay(loader.layout, 1);
     },
     addNode: function(id, state, name, info){
         //use id for name if it's only whitespace
@@ -297,7 +308,7 @@ var loader = {
         ns = calcSize(name);
         moviedata.nodeSize[nodeIndex] = {width: _.max([os.width, ns.width]), height: _.max([os.height, ns.height])};
     },
-    addEdge: function(from, to, tag, state, name, info){
+    addEdge: function(from, to, tag, state, name, info, weak){
         //use id for name if it's only whitespace
         if(name.match(/^\s*$/)) name = [from,to,tag].join("-");
         //init
@@ -305,7 +316,7 @@ var loader = {
         var cs = moviedata.states[loader.currentState];
         var cc = cs.changes[loader.currentChange];
         //create
-        var edgeIndex = loader.registerEdge(from, to, tag);
+        var edgeIndex = loader.registerEdge(from, to, tag, weak);
         //base type
         if(loader.currentChange == 0){
             cs.edgeStates[edgeIndex] = {
@@ -352,7 +363,7 @@ var loader = {
 
         return nodeIndex;
     },
-    registerEdge: function(from, to, tag){
+    registerEdge: function(from, to, tag, weak){
         var id = [from, to, tag].join(' ');
         //set up connected nodes
         if(moviedata.nodeIds.indexOf(from) == -1){        
@@ -375,7 +386,12 @@ var loader = {
             }
             //stage
             moviedata.edgeViews[edgeIndex] = makeLink(from, to);
-            mainGraph.addCell(moviedata.edgeViews[edgeIndex]);
+            //weak edges can't be added to the graph before layout
+            if(weak) {
+                moviedata.weakEdges.push({model: moviedata.edgeViews[edgeIndex], index: edgeIndex});
+            } else {
+                mainGraph.addCell(moviedata.edgeViews[edgeIndex]);
+            }
         }
 
         return edgeIndex;
@@ -388,12 +404,25 @@ var loader = {
         for(var i=f.n; i<moviedata.nodeSize.length;i++){
             moviedata.nodeViews[i].set('size', moviedata.nodeSize[i]);
         }
+        //remove weak edges (they might have been added by a prior call to layout)
+        for(var i=0;i<moviedata.weakEdges.length;i++){
+            moviedata.weakEdges[i].model.remove();
+        }
         //layout
         var size = joint.layout.DirectedGraph.layout(mainGraph, {
             setLinkVertices: false,
             nodeSep: 5,
             rankDir: urlParams["dir"]
         });
+        //include weak edges
+        for(var i=0;i<moviedata.weakEdges.length;i++){
+            var e = moviedata.weakEdges[i];
+            mainGraph.addCell(e.model);
+            //and re-cache it if necessary
+            if(e.index<=f.e) {
+                moviedata.edgeViews[e.index] = V(mainDisplay.findViewByModel(e.model).el);
+            }
+        }
         //cache the view elements
         for(var i=f.n; i<moviedata.nodeViews.length; i++){
             var model = moviedata.nodeViews[i];
@@ -693,6 +722,7 @@ function resetData(){
     moviedata.nodeSize = [];
     moviedata.edgeIds = [];
     moviedata.edgeViews = [];
+    moviedata.weakEdges = [];
     moviedata.states = [];
     moviedata.currentState = {b:-1,c:-1};
 
