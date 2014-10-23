@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html><body>
 <link rel="stylesheet" type="text/css" href="lib/joint.min.css" />
+<link rel="stylesheet" type="text/css" href="lib/jquery-ui.min.css" />
 <link rel="stylesheet" type="text/css" href="lib/layout-default.css" />
 <link rel="stylesheet" type="text/css" href="graph.css" />
 <link id="csschoice" rel="stylesheet" type="text/css" href="" />
@@ -35,8 +36,10 @@
   <div id="mainDisplay" class="graphmoviepane"></div>
 </div>
 
+<script type="text/javascript" src="lib/jquery.js"></script>
 <script type="text/javascript" src="lib/joint.min.js"></script>
 <script type="text/javascript" src="lib/joint.layout.DirectedGraph.min.js"></script>
+<script type="text/javascript" src="lib/jquery-ui.min.js"></script>
 <script type="text/javascript" src="lib/jquery.layout.js"></script>
 <script type="text/javascript" src="graph.js"></script>
 
@@ -47,13 +50,14 @@
       center__paneSelector: "#centerpane",
       west__size: 250,
       spacing_open: 5,
-      spacing_closed: 5
+      spacing_closed: 5,
+      minSize: 150
     });
     $('#controls-left').layout({ 
       north__paneSelector: "#initcontrols",
       center__paneSelector: "#listpane",
       south__paneSelector: "#infobox",
-      south__size: 200,
+      south__size: 100,
       spacing_open: 5,
       spacing_closed: 5,
       minSize: 50
