@@ -20,6 +20,9 @@
   stroke: #c0c0c0;
 }
 
+/* hide link tools we don't need */
+.link-tools { display: none }
+.marker-arrowheads { display: none }
 
 /* document layout */
 
