@@ -128,8 +128,11 @@ var parser = {
     },
     dispatch: function(tag, args, title, text){
         switch (tag) {
-            case 'style':
-                style.add(args[0], title, text);
+            case 'styleselect':
+                style.select(args[0]);
+                break;
+            case 'styleadd':
+                style.create(args[0], title, text);
                 break;
             case 'state':
                 loader.addState(title, text);
@@ -145,6 +148,7 @@ var parser = {
                 }
                 break;
             case 'edge':
+            case 'strongedge':
                 if(args.length >= 4){
                     loader.addEdge(args[0], args[1], args[2], args[3], title, text, false);
                 }else if(args.length == 3){
@@ -169,6 +173,27 @@ var parser = {
 /*******************/
 /* Data processing */
 /*******************/
+
+var style = {
+    inline: [],
+    select: function(value) {
+        $('#style').val(value);
+        handleStyleChange();
+    },
+    create: function(value, title, text){
+        //save data
+        style.inline[value] = text;
+        //modify chooser
+        var opt = $('#style option[value='+value+']')
+        if(opt.length) {
+            //reuse option if available
+            opt.text(title);
+        }else{
+            //create option
+            $('#style').append($('<option></option>').val(value).text(title));
+        }
+    }
+}
 
 var loader = {
     currentState: -1,
@@ -715,7 +740,32 @@ function handleZoomText(event){
 }
 
 function handleStyleChange(){
-    $('#csschoice').prop('href','css/'+$('#style option:selected').val()+'.css');
+    var selectedStyle = $('#style option:selected').val()
+    //destroy last selection
+    if(style.active){
+        style.active.parentNode.removeChild(style.active);
+        style.active = null;
+    }else{
+        $('#csschoice').prop('href','');
+    }
+    //choose between style from file or one from loaded graph (default)
+    if(style.inline[selectedStyle]){
+        //modified from SO: http://stackoverflow.com/qdocument.addStyle= function(str, hoo, med){
+        var str = style.inline[selectedStyle];
+        var el= document.createElement('style');
+        el.type= "text/css";
+        el.media= 'screen';
+        el.title= "internal style";
+        if(el.styleSheet)
+            el.styleSheet.cssText= str;//IE only
+        else
+            el.appendChild(document.createTextNode(str));
+        style.active = document.getElementsByTagName('head')[0].appendChild(el);
+    }else{
+        $('#csschoice').prop('href','css/'+selectedStyle+'.css');     
+    }
+
+    //jump back to out state list
     $('#list').focus();
 }
 

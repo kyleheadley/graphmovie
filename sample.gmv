@@ -1,3 +1,13 @@
+[styleadd simpleadd]Default+
+.missing .connection, .missing rect {
+  stroke: red;
+  fill: grey;
+}
+.trouble .connection {
+  stroke: lightpink;
+  stroke-width: 2px;
+}
+[styleselect simpleadd]
 [state] First
 [edge 1 2 active]
 []btw, anything that has an empty tag is a comment
