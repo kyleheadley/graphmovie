@@ -379,7 +379,7 @@ var loader = {
             edgeIndex = moviedata.edgeIds.length;
             moviedata.edgeIds.push(id);
             //retroactive add
-            var name = id.replace(/ /g,'-');
+            var name = id.replace(/ /g,'_');
             loader.currentEdgeStates[edgeIndex] = {state: STATE_NONE, name: name, info: ''};
             for(var i = 0; i < moviedata.states.length; i++){
                 moviedata.states[i].edgeStates[edgeIndex] = {state: STATE_NONE, name: name, info: ''};
@@ -758,22 +758,23 @@ function calcSize(label) {
 }
 
 function makeElement(label) {
+    var labelStyle = "<p style='font-size:"+NODE_TEXT_SIZE+"px;font-family:monospace'>"
     var s = calcSize(label);
-    var element = new joint.shapes.basic.Rect({
+    var element = new joint.shapes.basic.TextBlock({
         id: label,
         size: { width: s.width, height: s.height },
+        content: labelStyle+label,
         attrs: {
-            text: {
-                text: label,
-                'font-size': NODE_TEXT_SIZE,
-                'font-family': 'monospace',
-                'transform': ''
-            },
             rect: {
                 width: s.width, height: s.height,
                 rx: 5, ry: 5,
                 stroke: '#555'
-            }
+            },
+            text: {
+                'font-size': NODE_TEXT_SIZE,
+                'font-family': 'monospace',
+                'transform': ''
+            },
         }
     });
     return element;
@@ -811,7 +812,7 @@ function edgeInfoText(item, index) {
     if(typeof index === "undefined") index = item.index;
     //get useful name
     var name = item.name;
-    if(name == "") name = "edge "+ moviedata.edgeIds[index].replace(/ /g ,"-");
+    if(name == "") name = "edge "+ moviedata.edgeIds[index].replace(/ /g ,"_");
 
     var info = "<b>"+name+"</b>: "+item.state+"<br />";
     if(item.info != ""){
