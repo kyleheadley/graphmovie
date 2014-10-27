@@ -436,6 +436,15 @@ var loader = {
         moviedata.height = size.height + window.innerHeight;
         moviedata.width = size.width + window.innerWidth;
         adjustPaper();
+        //setup '#list'
+        var first = f.b-1;
+        if (first == -1) first = 0;
+        for(var i=first; i<moviedata.states.length; i++){
+            for(var j=0; j<moviedata.states[i].changes.length; j++){
+                var state = moviedata.states[i].changes[j];
+                state.$op.val(i+'c'+j).text(state.title);
+            }
+        }
         //setup first states
         if(f.b == 0 && f.c == 0){
             moviedata.info = titleInfoText(moviedata.states[0].changes[0]);
@@ -451,17 +460,20 @@ var loader = {
             }
             $('#infobox').html(moviedata.info);
             //select the first state
-            moviedata.currentState = {b:0,c:0};
-            $('#list').val('0c0');
-        }
-        //setup '#list'
-        var first = f.b-1;
-        if (first == -1) first = 0;
-        for(var i=first; i<moviedata.states.length; i++){
-            for(var j=0; j<moviedata.states[i].changes.length; j++){
-                var state = moviedata.states[i].changes[j];
-                state.$op.val(i+'c'+j).text(state.title);
+            var bs = 0, cs = 0;
+            if(window.location.hash) {
+                var ss =  window.location.hash.substring(1).split('c');
+                bs = parseInt(ss[0]);
+                cs = parseInt(ss[1]);
+                if(bs<0 || bs>=moviedata.states.length ||
+                   cs<0 && cs>=moviedata.states[bs].changes.length) {
+                    bs = 0;
+                    cs = 0;
+                }
             }
+            moviedata.currentState = {b:0,c:0};
+            $('#list').val(bs+'c'+cs);
+            refreshGraph(bs,cs);
         }
         //increment current layout position
         moviedata.firstUnLayedOutState = {
@@ -481,6 +493,9 @@ var loader = {
 /*****************/
 //handler for new file selection
 function loadFile(file) {
+    //explicitly loaded files should start at the beginning
+    window.location.hash = '';
+    //read file
     var reader = new FileReader();
     reader.onload = function(e) {
         //clear view
@@ -620,6 +635,7 @@ function refreshGraph(baseState, changeState){
     $('#infobox').html(moviedata.info);
     moviedata.currentState.b = baseState;
     moviedata.currentState.c = changeState;
+    window.location.hash = '#'+baseState+'c'+changeState;
 }
 
 /********************/
