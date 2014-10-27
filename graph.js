@@ -129,10 +129,21 @@ var parser = {
     dispatch: function(tag, args, title, text){
         switch (tag) {
             case 'styleselect':
-                style.select(args[0]);
+                if(args.length == 1) {
+                    style.select(args[0]);
+                }
                 break;
             case 'styleadd':
-                style.create(args[0], title, text);
+                if(args.length == 1) {
+                    style.create(args[0], title, text);
+                }
+                break;
+            case 'styleappend':
+                if(args.length >= 2) {
+                    style.create(args[1], title, text, args[0]);
+                }else if(args.length == 1){
+                    style.create(args[0], title, text, args[0]);
+                }
                 break;
             case 'state':
                 loader.addState(title, text);
@@ -175,14 +186,19 @@ var parser = {
 /*******************/
 
 var style = {
-    inline: [],
+    inline: {},
+    active: [],
     select: function(value) {
         $('#style').val(value);
         handleStyleChange();
     },
-    create: function(value, title, text){
+    create: function(value, title, text, prev){
+        //prev is either undefined or the appended sheet or file name
+        if(prev && style.inline[prev]) {
+            prev = style.inline[prev];
+        }
         //save data
-        style.inline[value] = text;
+        style.inline[value] = {text: text, prev: prev};
         //modify chooser
         var opt = $('#style option[value='+value+']')
         if(opt.length) {
@@ -192,7 +208,7 @@ var style = {
             //create option
             $('#style').append($('<option></option>').val(value).text(title));
         }
-    }
+    },
 }
 
 var loader = {
@@ -742,30 +758,38 @@ function handleZoomText(event){
 function handleStyleChange(){
     var selectedStyle = $('#style option:selected').val()
     //destroy last selection
-    if(style.active){
-        style.active.parentNode.removeChild(style.active);
-        style.active = null;
+    if(style.active.length){
+        _.each(style.active, (function(e){e.parentNode.removeChild(e)}));
+        style.active = [];
     }else{
         $('#csschoice').prop('href','');
     }
     //choose between style from file or one from loaded graph (default)
-    if(style.inline[selectedStyle]){
-        //modified from SO: http://stackoverflow.com/qdocument.addStyle= function(str, hoo, med){
-        var str = style.inline[selectedStyle];
-        var el= document.createElement('style');
-        el.type= "text/css";
-        el.media= 'screen';
-        el.title= "internal style";
-        if(el.styleSheet)
-            el.styleSheet.cssText= str;//IE only
-        else
-            el.appendChild(document.createTextNode(str));
-        style.active = document.getElementsByTagName('head')[0].appendChild(el);
-    }else{
-        $('#csschoice').prop('href','css/'+selectedStyle+'.css');     
-    }
+    var setupsheet; //recursive
+    (setupsheet = function(s) {
+        //need to accept the string reference or the object it refers to
+        var so = s;
+        if(typeof so === "string") so = style.inline[s];
+        if(so){
+            //load previous sheets first to cascade (append) properly
+            if(so.prev) setupsheet(so.prev);
+            //modified from SO: http://stackoverflow.com/qdocument.addStyle= function(str, hoo, med){
+            var str = so.text;
+            var el= document.createElement('style');
+            el.type= "text/css";
+            el.media= 'screen';
+            el.title= "internal style";
+            if(el.styleSheet)
+                el.styleSheet.cssText= str;//IE only
+            else
+                el.appendChild(document.createTextNode(str));
+            style.active.push(document.getElementsByTagName('head')[0].appendChild(el));
+        }else{
+            $('#csschoice').prop('href','css/'+s+'.css');     
+        }
+    })(selectedStyle);
 
-    //jump back to out state list
+    //jump back to state list
     $('#list').focus();
 }
 
