@@ -514,7 +514,7 @@ var loader = {
             }
             moviedata.currentState = {b:0,c:0};
             $('#list').val(bs+'c'+cs);
-            refreshGraph(bs,cs);
+            window.location.hash = '#'+bs+'c'+cs;
         }
         //increment current layout position
         moviedata.firstUnLayedOutState = {
@@ -690,7 +690,9 @@ function init(){
     $('#zoomnum').change(handleZoomText);
     $('#style').change(handleStyleChange);
     $('#dolayout').on("click", loader.layout);
+    //url data
     setUrlParams();
+    window.onhashchange = handleHashChange;
     //initial css load
     handleStyleChange();
     //load url if supplied
@@ -698,6 +700,34 @@ function init(){
         $.get(urlParams["file"], generateMovie)
     }
  
+}
+
+function handleHashChange() {
+    var hash = window.location.hash.substring(1).split('c');
+    var bs = parseInt(hash[0]);
+    var cs = parseInt(hash[1]);
+
+    if(isNaN(bs)||isNaN(cs)||bs<0) return;
+
+    //check to see if the list select has already handled the change
+    if($('#list').val() == bs+'c'+cs) return;
+
+    //math to allow more flexibility in hashes, ie 2c-3
+    var maxcs = moviedata.states[bs].changes.length;
+    while(cs >= maxcs) {
+        cs -= maxcs;
+        bs += 1;
+        if(bs>=moviedata.states.length) return;
+        maxcs = moviedata.states[bs].changes.length;
+    }
+    while(cs < 0) {
+        if(bs<=0) return;
+        cs += moviedata.states[bs-1].changes.length;
+        bs -= 1;
+    }
+    //set the list box selection (without event) and change the graph
+    $('#list').val(bs+'c'+cs);
+    refreshGraph(bs,cs);
 }
 
 function handleFileSelect(event) {
@@ -732,6 +762,7 @@ function handleListSelect(event){
         cs = 0;
     }
     $('#list').val(bs+"c"+cs);
+    window.location.hash = '#'+bs+'c'+cs;
     refreshGraph(bs,cs);
 }
 
