@@ -238,14 +238,14 @@ var loader = {
         loader.currentNodeStates = [];
         for(var i = 0; i<moviedata.nodeIds.length; i++){
             var name = moviedata.nodeIds[i];
-            loader.currentNodeStates[i] = {state: STATE_NONE, name: name, info: ''};
-            newState.nodeStates[i] = {state: STATE_NONE, name: name, info: ''};
+            loader.currentNodeStates[i] = {index: i, state: STATE_NONE, name: name, info: ''};
+            newState.nodeStates[i] = {index: i, state: STATE_NONE, name: name, info: ''};
         }
         loader.currentEdgeStates = [];
         for(var i = 0; i<moviedata.edgeIds.length; i++){
             var name = moviedata.edgeIds[i].replace(/ /g,'-');
-            loader.currentEdgeStates[i] = {state: STATE_NONE, name: name, info: ''};
-            newState.edgeStates[i] = {state: STATE_NONE, name: name, info: ''};
+            loader.currentEdgeStates[i] = {index: i, state: STATE_NONE, name: name, info: ''};
+            newState.edgeStates[i] = {index: i, state: STATE_NONE, name: name, info: ''};
         }
         //increment
         loader.currentState = moviedata.states.length;
@@ -323,6 +323,7 @@ var loader = {
         //base type
         if(loader.currentChange == 0){
             cs.nodeStates[nodeIndex] = {
+                index: nodeIndex,
                 state: state,
                 name: name,
                 info: info
@@ -361,6 +362,7 @@ var loader = {
         //base type
         if(loader.currentChange == 0){
             cs.edgeStates[edgeIndex] = {
+                index: edgeIndex,
                 state: state,
                 name: name,
                 info: info
@@ -391,9 +393,9 @@ var loader = {
             nodeIndex = moviedata.nodeIds.length;
             moviedata.nodeIds.push(id);
             //retroactive add
-            loader.currentNodeStates[nodeIndex] = {state: STATE_NONE, name: id, info: ''};
+            loader.currentNodeStates[nodeIndex] = {index: nodeIndex, state: STATE_NONE, name: id, info: ''};
             for(var i = 0; i < moviedata.states.length; i++){
-                moviedata.states[i].nodeStates[nodeIndex] = {state: STATE_NONE, name: id, info: ''};
+                moviedata.states[i].nodeStates[nodeIndex] = {index: nodeIndex, state: STATE_NONE, name: id, info: ''};
             }
             //init size
             moviedata.nodeSize[nodeIndex] = calcSize("min");
@@ -421,9 +423,9 @@ var loader = {
             moviedata.edgeIds.push(id);
             //retroactive add
             var name = id.replace(/ /g,'-');
-            loader.currentEdgeStates[edgeIndex] = {state: STATE_NONE, name: name, info: ''};
+            loader.currentEdgeStates[edgeIndex] = {index: edgeIndex, state: STATE_NONE, name: name, info: ''};
             for(var i = 0; i < moviedata.states.length; i++){
-                moviedata.states[i].edgeStates[edgeIndex] = {state: STATE_NONE, name: name, info: ''};
+                moviedata.states[i].edgeStates[edgeIndex] = {index: edgeIndex, state: STATE_NONE, name: name, info: ''};
             }
             //stage
             moviedata.edgeViews[edgeIndex] = makeLink(from, to);
@@ -570,7 +572,7 @@ function refreshGraph(baseState, changeState){
     moviedata.info = titleInfoText(moviedata.states[baseState].changes[changeState]);
 
     // +1 within the same base state (for speed)
-    if(oldBase == baseState && oldChange+1 == changeState && moviedata.mode != 'diff'){
+    if(oldBase == baseState && oldChange+1 == changeState && changeState>1){
         for(var cs=oldChange+1;cs<=changeState;cs++){
             var ncs = moviedata.states[baseState].changes[cs].nodeDiffs
             for(var n=0;n<ncs.length;n++){
@@ -593,6 +595,32 @@ function refreshGraph(baseState, changeState){
                 }else if(ecs[e].info != ecs[e].lastState.info || ecs[e].name != ecs[e].lastState.name) {
                     moviedata.info += edgeInfoText(ecs[e]);
                 }
+            }
+        }
+    // -1 within same state
+    }else if(oldBase == baseState && oldChange-1 == changeState && changeState>0) {
+        var cs = changeState;
+        //it's the old one (the following one) that has the data for both states
+        var oncs = moviedata.states[baseState].changes[cs+1].nodeDiffs
+        for(var n=0;n<oncs.length;n++){
+            //set states
+            if(oncs[n].state != oncs[n].lastState.state){
+                moviedata.nodeViews[oncs[n].lastState.index].removeClass(oncs[n].state).addClass(oncs[n].lastState.state);
+                //set info on state change
+                moviedata.info += nodeInfoText(oncs[n].lastState);
+            }else if(oncs[n].info != oncs[n].lastState.info || oncs[n].name != oncs[n].lastState.name) {
+                //set info on info change
+                moviedata.info += nodeInfoText(oncs[n].lastState);
+            }
+            //moviedata.nodeViews[ncs[n].index].findOne("text").text(ncs[n].name);
+        }
+        var oecs = moviedata.states[baseState].changes[cs+1].edgeDiffs
+        for(var e=0;e<oecs.length;e++){
+            if(oecs[e].state != oecs[e].lastState.state){
+                moviedata.edgeViews[oecs[e].lastState.index].removeClass(oecs[e].state).addClass(oecs[e].lastState.state);
+                moviedata.info += edgeInfoText(oecs[e].lastState);
+            }else if(oecs[e].info != oecs[e].lastState.info || oecs[e].name != oecs[e].lastState.name) {
+                moviedata.info += edgeInfoText(oecs[e].lastState);
             }
         }
     //arbitrary change of states
@@ -676,7 +704,6 @@ function refreshGraph(baseState, changeState){
     $('#infobox').html(moviedata.info);
     moviedata.currentState.b = baseState;
     moviedata.currentState.c = changeState;
-    window.location.hash = '#'+baseState+'c'+changeState;
 }
 
 /********************/
@@ -727,7 +754,7 @@ function handleHashChange() {
     }
     //set the list box selection (without event) and change the graph
     $('#list').val(bs+'c'+cs);
-    refreshGraph(bs,cs);
+    selectionChanged(bs,cs);
 }
 
 function handleFileSelect(event) {
@@ -760,10 +787,14 @@ function handleListSelect(event){
         }
         //in different state: just back up to state
         cs = 0;
+        $('#list').val(bs+"c"+cs);
     }
-    $('#list').val(bs+"c"+cs);
     window.location.hash = '#'+bs+'c'+cs;
-    refreshGraph(bs,cs);
+    selectionChanged(bs, cs);
+}
+
+function selectionChanged(bs, cs) {
+    refreshGraph(bs, cs);
 }
 
 function handleModeChange(event) {
