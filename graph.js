@@ -625,6 +625,8 @@ function refreshGraph(baseState, changeState){
         }
     //arbitrary change of states
     }else{
+        var nodechangelist = [];
+        var edgechangelist = [];
         //change the state of all changed objects to their base state
         var cc = moviedata.states[oldBase].changes[oldChange];
         for(var i=0;i<cc.nodeDiffs.length;i++){
@@ -632,7 +634,14 @@ function refreshGraph(baseState, changeState){
             var ns = moviedata.states[oldBase].nodeStates[diff.index].state;
             if(moviedata.mode == 'diff') ns = STATE_NONE;
             if(ns != diff.state){
-                moviedata.nodeViews[diff.index].removeClass(diff.state).addClass(ns);
+                var thischange = {};
+                if(nodechangelist[diff.index] === undefined) {
+                    thischange.oldstate = diff.state;
+                }else{
+                    thischange.oldstate = nodechangelist[diff.index].oldstate;
+                }
+                thischange.newstate = ns;
+                nodechangelist[diff.index]=thischange;
             }
             //TODO: change name
         }
@@ -641,7 +650,14 @@ function refreshGraph(baseState, changeState){
             var ns = moviedata.states[oldBase].edgeStates[diff.index].state;
             if(moviedata.mode == 'diff') ns = STATE_NONE;
             if(ns != diff.state){
-                moviedata.edgeViews[diff.index].removeClass(diff.state).addClass(ns);
+                var thischange = {};
+                if(edgechangelist[diff.index] === undefined) {
+                    thischange.oldstate = diff.state;
+                }else{
+                    thischange.oldstate = edgechangelist[diff.index].oldstate;
+                }
+                thischange.newstate = ns;
+                edgechangelist[diff.index]=thischange;
             }
         }
         //change all the objects to the new base state
@@ -650,7 +666,14 @@ function refreshGraph(baseState, changeState){
             var ns = moviedata.states[baseState].nodeStates[i].state;
             if(moviedata.mode == 'diff') ns = STATE_NONE;
             if(ns != os){
-                moviedata.nodeViews[i].removeClass(os).addClass(ns);
+                var thischange = {};
+                if(nodechangelist[i] === undefined) {
+                    thischange.oldstate = os;
+                }else{
+                    thischange.oldstate = nodechangelist[i].oldstate;
+                }
+                thischange.newstate = ns;
+                nodechangelist[i]=thischange;
             }
             //TODO: change name
         }
@@ -659,7 +682,14 @@ function refreshGraph(baseState, changeState){
             var ns = moviedata.states[baseState].edgeStates[i].state;
             if(moviedata.mode == 'diff') ns = STATE_NONE;
             if(ns != os){
-                moviedata.edgeViews[i].removeClass(os).addClass(ns);
+                var thischange = {};
+                if(edgechangelist[i] === undefined) {
+                    thischange.oldstate = os;
+                }else{
+                    thischange.oldstate = edgechangelist[i].oldstate;
+                }
+                thischange.newstate = ns;
+                edgechangelist[i]=thischange;
             }
         }
         var bs = moviedata.states[baseState];
@@ -680,7 +710,14 @@ function refreshGraph(baseState, changeState){
             var diff = nc.nodeDiffs[i]
             var os = moviedata.states[baseState].nodeStates[diff.index].state;
             if(os != diff.state){
-                moviedata.nodeViews[diff.index].removeClass(os).addClass(diff.state);
+                var thischange = {};
+                if(nodechangelist[diff.index] === undefined) {
+                    thischange.oldstate = os;
+                }else{
+                    thischange.oldstate = nodechangelist[diff.index].oldstate;
+                }
+                thischange.newstate = diff.state;
+                nodechangelist[diff.index]=thischange;
             }
             if(diff.state != diff.lastState.state || diff.info != diff.lastState.info || diff.name != diff.lastState.name) {
                 //set info on info change from previous movie state
@@ -692,11 +729,29 @@ function refreshGraph(baseState, changeState){
             var diff = nc.edgeDiffs[i]
             var os = moviedata.states[baseState].edgeStates[diff.index].state;
             if(os != diff.state){
-                moviedata.edgeViews[diff.index].removeClass(os).addClass(diff.state);
+                var thischange = {};
+                if(edgechangelist[diff.index] === undefined) {
+                    thischange.oldstate = os;
+                }else{
+                    thischange.oldstate = edgechangelist[diff.index].oldstate;
+                }
+                thischange.newstate = diff.state;
+                edgechangelist[diff.index]=thischange;
             }
             if(diff.state != diff.lastState.state || diff.info != diff.lastState.info || diff.name != diff.lastState.name) {
                 //set info on info change from previous movie state
                 moviedata.info += edgeInfoText(diff);
+            }
+        }
+        //do the changes
+        for(i=0;i<moviedata.nodeViews.length;i++) {
+            if(nodechangelist[i]) {
+                moviedata.nodeViews[i].removeClass(nodechangelist[i].oldstate).addClass(nodechangelist[i].newstate);
+            }
+        }
+        for(i=0;i<moviedata.edgeViews.length;i++) {
+            if(edgechangelist[i]) {
+                moviedata.edgeViews[i].removeClass(edgechangelist[i].oldstate).addClass(edgechangelist[i].newstate);
             }
         }
     }
