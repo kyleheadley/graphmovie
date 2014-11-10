@@ -35,6 +35,10 @@ function setUrlParams(){
 /* init      */
 /*************/
 
+var CHUNK = 0; //skips changes if you select too fast
+var SEE_ALL = 1; //every selected change will show (but browser may still skip visual updates)
+var CONTROL_MODE = SEE_ALL;
+
 var STATE_NONE = 'nonactive'; //default undeclared element
 var STATE_UNKNOWN = 'active'; //default undeclared state
 
@@ -792,7 +796,7 @@ function handleHashChange() {
     if(isNaN(bs)||isNaN(cs)||bs<0) return;
 
     //check to see if the list select has already handled the change
-    if($('#list').val() == bs+'c'+cs) return;
+    if(CONTROL_MODE == SEE_ALL) if($('#list').val() == bs+'c'+cs) return;
 
     //math to allow more flexibility in hashes, ie 2c-3
     var maxcs = moviedata.states[bs].changes.length;
@@ -845,7 +849,7 @@ function handleListSelect(event){
         $('#list').val(bs+"c"+cs);
     }
     window.location.hash = '#'+bs+'c'+cs;
-    selectionChanged(bs, cs);
+    if(CONTROL_MODE == SEE_ALL) selectionChanged(bs, cs);
 }
 
 function selectionChanged(bs, cs) {
