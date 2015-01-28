@@ -413,10 +413,12 @@ var loader = {
     registerEdge: function(from, to, tag, weak){
         var id = [from, to, tag].join(' ');
         //set up connected nodes
-        if(moviedata.nodeIds.indexOf(from) == -1){        
+        var from_id = moviedata.nodeIds.indexOf(from)
+        if(from_id == -1 || loader.currentNodeStates[from_id].state == STATE_NONE){        
             loader.addNode(from, STATE_UNKNOWN, from, '')
         }
-        if(moviedata.nodeIds.indexOf(to) == -1){        
+        var to_id = moviedata.nodeIds.indexOf(to)
+        if(to_id == -1 || loader.currentNodeStates[to_id].state == STATE_NONE){        
             loader.addNode(to, STATE_UNKNOWN, to, '')
         }
         //find edge
