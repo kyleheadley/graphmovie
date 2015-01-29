@@ -50,7 +50,7 @@ var NODE_TEXT_SIZE = 8;
 //create global objects
 var moviedata = {
     mode: 'all',
-    zoom: 0.5,
+    zoom: 1.0,
     width: 400,
     height: 400,
     firstUnLayedOutState: {n:0,e:0,b:0,c:0},
