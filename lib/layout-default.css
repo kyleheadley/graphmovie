@@ -19,7 +19,7 @@
  *	Just to make demo-pages look better - not actually relevant to Layout!
  */
 body {
-	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-family: sans-serif;
 	font-size:   100%;
 	*font-size:  80%;
 }
@@ -30,8 +30,7 @@ body {
 .ui-layout-pane { /* all 'panes' */
 	background:	#FFF; 
 	border:		1px solid #BBB;
-	padding:	10px; 
-	overflow:	auto;
+	padding:	10px;
 	/* DO NOT add scrolling (or padding) to 'panes' that have a content-div,
 	   otherwise you may get double-scrollbars - on the pane AND on the content-div
 	   - use ui-layout-wrapper class if pane has a content-div
