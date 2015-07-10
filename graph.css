@@ -1,3 +1,7 @@
+body{
+  font-family: sans-serif;
+}
+
 /* graph element default states */
 
 .nonactive .connection {
@@ -32,11 +36,10 @@
 }
 
 #initcontrols {
-  overflow: hidden;
+  overflow: none;
 }
 
 #list {
-  font-family: monospace;
   font-size: 11px;
   width: 100%;
   height: 100%;
@@ -44,6 +47,39 @@
 
 #infobox {
   padding: 2px;
-  font-family: monospace;
   font-size: 8px;
 }
+
+#mainDisplay{
+  text-align: center;
+}
+
+/* menu styles */
+.header{
+  padding: 10px;
+  padding-bottom: 15px;
+  letter-spacing: 1.2px;
+  border-bottom: 2px solid #444444;
+  margin-bottom: 15px;
+}
+
+.header-spacing{
+  margin: 0 5px; 
+}
+
+select.header-buttons{
+  padding: 2px;
+  letter-spacing: 1.1px;
+  border-bottom: 2px solid #888888;
+  border-right: 2px solid #888888;
+}
+
+button{
+  padding: 3px;
+  letter-spacing: 1.1px;
+  border-bottom: 2px solid #888888;
+  border-right: 2px solid #888888;
+  border-top: 1px solid #888888;
+  border-left: 1px solid #888888;
+}
+

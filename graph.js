@@ -68,14 +68,25 @@ var moviedata = {
 //create views - currently only a single view
 //var stage = $('<div id="stagingDisplay></div>')
 var mainGraph = new joint.dia.Graph;
+
 //var stagingGraph = new joint.dia.Graph;
 var mainDisplay = new joint.dia.Paper({
-    el: $('#mainDisplay'),
-    width: 200,
-    height: 200,
+    width: 1000,
+    height: 1000,
     gridSize: 1,
     model: mainGraph
 });
+
+var paperScroller = new joint.ui.PaperScroller({
+    paper: mainDisplay,
+    autoResizePaper: true
+});
+
+mainDisplay.on('blank:pointerdown', paperScroller.startPanning);
+paperScroller.$el.css({ width: '100%', height: '100%' }).appendTo('#mainDisplay');
+
+V(mainDisplay.viewport).translate(250, 150);
+
 /*
 var stagingDisplay = new joint.dia.Paper({
     el: stage,
@@ -924,7 +935,7 @@ function adjustPaper(){
     var w = moviedata.width;
     var z = moviedata.zoom;
     V(mainDisplay.viewport).scale(z,z);
-    mainDisplay.setDimensions(w*z,h*z);
+    mainDisplay.setDimensions(w*z*1.5,h*z*1.5);
 }
 
 function resetData(){

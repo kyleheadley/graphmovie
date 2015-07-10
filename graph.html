@@ -2,44 +2,55 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="lib/joint.min.css" />
+    <link rel="stylesheet" type="text/css" href="lib/joint.all.min.css" />
     <link rel="stylesheet" type="text/css" href="lib/jquery-ui.min.css" />
     <link rel="stylesheet" type="text/css" href="lib/layout-default.css" />
     <link rel="stylesheet" type="text/css" href="graph.css" />
     <link id="csschoice" rel="stylesheet" type="text/css" href="" />
   </head>
 <body>
-  <div id="controls-left" class="graphmoviepane">
-    <div id="initcontrols" class="graphmoviepane">
-      <input id="file" type="file" name="file" />
-      <select id="style">
-      	<option value="colors" selected>Simple colors</option>
+  <!-- HEADER SECTION -->
+    <div id="initcontrols" class="header">
+      <select id="style" class="header-buttons header-spacing">
+        <option value="colors" selected>Simple colors</option>
         <option value="adapton">Adapton</option>
         <option value="hashbaltree">HashTree</option>
       </select>
-      <button id="dolayout">Layout Now(beta)</button>
+
+      <button id="dolayout" class="header-spacing">Layout Now(beta)</button>
+
+      <select id="mode" class="header-buttons header-spacing">
+        <option value="all" selected>View full state</option>
+        <option value="diff">Changes only</option>
+        <option value="no-change">Skip changes</option>
+      </select>
+
+      <input id="zoomnum" type="number" min="10" max="200" step="5" value="100" class="header-spacing" />
+
+      <input id="file" type="file" name="file"  class="header-spacing" />
     </div>
+  <!-- END OF HEADER SECTION -->
+
+<!-- LEFT PANE -->
+  <div id="controls-left" class="graphmoviepane">
     <div id="listpane" class="graphmoviepane">
       <select id="list" size="2">
       	<option value="-1c-1">No file selected</option>
       </select>
     </div>
+
     <div id="infobox" class="graphmoviepane"></div>
   </div>
+<!-- END OF LEFT PANE-->
+
+<!-- RIGHT PANE -->
   <div id="centerpane" class="graphmoviepane">
-    <div id="controls-top" class="graphmoviepane">
-    	<select id="mode">
-    		<option value="all" selected>View full state</option>
-    		<option value="diff">Changes only</option>
-    		<option value="no-change">Skip changes</option>
-    	</select>
-    	<input id="zoomnum" type="number" min="10" max="200" step="5" value="100"/>
-    </div>
     <div id="mainDisplay" class="graphmoviepane"></div>
   </div>
+<!-- END OF RIGHT PANE -->
 
   <script type="text/javascript" src="lib/jquery.js"></script>
-  <script type="text/javascript" src="lib/joint.min.js"></script>
+  <script type="text/javascript" src="lib/joint.all.min.js"></script>
   <script type="text/javascript" src="lib/joint.layout.DirectedGraph.min.js"></script>
   <script type="text/javascript" src="lib/jquery-ui.min.js"></script>
   <script type="text/javascript" src="lib/jquery.layout.js"></script>
@@ -48,15 +59,15 @@
   <script>
     $(document).ready(function () {
       $('body').layout({
+        north__paneSelector: "#initcontrols",
         west__paneSelector: "#controls-left",
         center__paneSelector: "#centerpane",
         west__size: 250,
-        spacing_open: 5,
-        spacing_closed: 5,
-        minSize: 150
+        north__maxSize: 50,
+        north__minSize: 50
       });
+
       $('#controls-left').layout({ 
-        north__paneSelector: "#initcontrols",
         center__paneSelector: "#listpane",
         south__paneSelector: "#infobox",
         south__size: 100,
@@ -64,10 +75,9 @@
         spacing_closed: 5,
         minSize: 50
       });
+      
       $('#centerpane').layout({
-        north__paneSelector: "#controls-top",
         center__paneSelector: "#mainDisplay",
-        north__size: 30,
         spacing_open: 5,
         spacing_closed: 5,
         minSize: 30
