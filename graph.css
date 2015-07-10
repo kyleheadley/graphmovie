@@ -1,3 +1,7 @@
+body{
+  font-family: sans-serif;
+}
+
 /* graph element default states */
 
 .nonactive .connection {
@@ -36,7 +40,6 @@
 }
 
 #list {
-  font-family: monospace;
   font-size: 11px;
   width: 100%;
   height: 100%;
@@ -44,7 +47,6 @@
 
 #infobox {
   padding: 2px;
-  font-family: monospace;
   font-size: 8px;
 }
 
